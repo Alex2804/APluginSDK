@@ -35,6 +35,8 @@ namespace apl
     }
 }
 
+#ifndef A_PLUGIN_SDK_EXCLUDE_DEFINITION
 # include "featuremanager.cpp"
+#endif
 
 #endif //APLUGINLIBRARY_FEATUREMANAGER_H

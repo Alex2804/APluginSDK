@@ -65,7 +65,8 @@ namespace apl
         }                                                                                                              \
     A_PLUGIN_CLASS_CLOSE_NAMESPACE
 
-
-#include "implementation/pluginapi.cpp"
+#ifndef A_PLUGIN_SDK_EXCLUDE_DEFINITION
+# include "implementation/pluginapi.cpp"
+#endif
 
 #endif //APLUGINLIBRARY_PLUGINAPI_H

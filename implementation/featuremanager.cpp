@@ -1,5 +1,14 @@
+#ifdef A_PLUGIN_SDK_EXCLUDE_DEFINITION
+# include "featuremanager.h"
+#endif
 
-apl::detail::FeatureManager manager;
+namespace apl
+{
+    namespace detail
+    {
+        FeatureManager featureManagerInstance;
+    }
+}
 
 apl::detail::FeatureManager::~FeatureManager()
 {
@@ -21,22 +30,22 @@ apl::PluginFeatureInfo* apl::detail::FeatureManager::registerFeature(const char 
     info->returnType = returnType;
     info->argumentList = argumentList;
     info->functionPointer = functionPointer;
-    manager.feature_infos.push_back(info);
+    featureManagerInstance.feature_infos.push_back(info);
     return info;
 }
 size_t apl::detail::FeatureManager::getFeatureCount()
 {
-    return manager.feature_infos.size();
+    return featureManagerInstance.feature_infos.size();
 }
 const apl::PluginFeatureInfo* apl::detail::FeatureManager::getFeatureInfo(size_t i)
 {
-    if(i < manager.feature_infos.size())
-        return manager.feature_infos[i];
+    if(i < featureManagerInstance.feature_infos.size())
+        return featureManagerInstance.feature_infos[i];
     return nullptr;
 }
 const apl::PluginFeatureInfo* const* apl::detail::FeatureManager::getFeatureInfos()
 {
-    return manager.feature_infos.data();
+    return featureManagerInstance.feature_infos.data();
 }
 
 apl::PluginClassInfo* apl::detail::FeatureManager::registerClass(const char *interfaceClassName,
@@ -48,20 +57,20 @@ apl::PluginClassInfo* apl::detail::FeatureManager::registerClass(const char *int
     info->className = featureClassName;
     info->createInstance = createInstance;
     info->deleteInstance = deleteInstance;
-    manager.class_infos.push_back(info);
+    featureManagerInstance.class_infos.push_back(info);
     return info;
 }
 size_t apl::detail::FeatureManager::getClassCount()
 {
-    return manager.class_infos.size();
+    return featureManagerInstance.class_infos.size();
 }
 const apl::PluginClassInfo* apl::detail::FeatureManager::getClassInfo(size_t i)
 {
-    if(i < manager.class_infos.size())
-        return manager.class_infos.at(i);
+    if(i < featureManagerInstance.class_infos.size())
+        return featureManagerInstance.class_infos.at(i);
     return nullptr;
 }
 const apl::PluginClassInfo* const* apl::detail::FeatureManager::getClassInfos()
 {
-    return manager.class_infos.data();
+    return featureManagerInstance.class_infos.data();
 }

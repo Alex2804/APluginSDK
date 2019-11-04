@@ -1,3 +1,6 @@
+#ifdef A_PLUGIN_SDK_EXCLUDE_DEFINITION
+# include "../pluginapi.h"
+#endif
 
 size_t apl::detail::getPluginFeatureCount()
 {
