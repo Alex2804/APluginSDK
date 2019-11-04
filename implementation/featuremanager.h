@@ -1,5 +1,5 @@
-#ifndef APLUGINLIBRARY_FEATUREMANAGER_H
-#define APLUGINLIBRARY_FEATUREMANAGER_H
+#ifndef APLUGINSDK_FEATUREMANAGER_H
+#define APLUGINSDK_FEATUREMANAGER_H
 
 #include <vector>
 
@@ -39,4 +39,4 @@ namespace apl
 # include "featuremanager.cpp"
 #endif
 
-#endif //APLUGINLIBRARY_FEATUREMANAGER_H
+#endif //APLUGINSDK_FEATUREMANAGER_H

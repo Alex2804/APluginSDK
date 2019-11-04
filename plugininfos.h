@@ -1,5 +1,5 @@
-#ifndef APLUGINLIBRARY_PLUGININFOS_H
-#define APLUGINLIBRARY_PLUGININFOS_H
+#ifndef APLUGINSDK_PLUGININFOS_H
+#define APLUGINSDK_PLUGININFOS_H
 
 #include "implementation/macros.h"
 
@@ -24,4 +24,4 @@ namespace apl {
     }
 }
 
-#endif //APLUGINLIBRARY_PLUGININFOS_H
+#endif //APLUGINSDK_PLUGININFOS_H

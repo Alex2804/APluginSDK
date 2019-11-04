@@ -1,5 +1,5 @@
-#ifndef APLUGINLIBRARY_PLUGINAPI_H
-#define APLUGINLIBRARY_PLUGINAPI_H
+#ifndef APLUGINSDK_PLUGINAPI_H
+#define APLUGINSDK_PLUGINAPI_H
 
 #include "implementation/featuremanager.h"
 #include "implementation/macros.h"
@@ -69,4 +69,4 @@ namespace apl
 # include "implementation/pluginapi.cpp"
 #endif
 
-#endif //APLUGINLIBRARY_PLUGINAPI_H
+#endif //APLUGINSDK_PLUGINAPI_H

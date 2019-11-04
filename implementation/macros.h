@@ -1,5 +1,5 @@
-#ifndef APLUGINLIBRARY_MACROS_H
-#define APLUGINLIBRARY_MACROS_H
+#ifndef APLUGINSDK_MACROS_H
+#define APLUGINSDK_MACROS_H
 
 #if !defined(APLUGINLIBRARY_EXPORT) && defined(_WIN32)
 # define APLUGINLIBRARY_EXPORT  __declspec( dllexport )
@@ -33,4 +33,4 @@
 #define A_PLUGIN_CLASS_NAME(interfaceName, className) \
     APluginClass_##interfaceName##_##className
 
-#endif //APLUGINLIBRARY_MACROS_H
+#endif //APLUGINSDK_MACROS_H
