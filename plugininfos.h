@@ -7,19 +7,21 @@ namespace apl {
     extern "C" {
         struct APLUGINLIBRARY_EXPORT PluginFeatureInfo
         {
-            const char *featureGroup;
-            const char *featureName;
-            const char *returnType;
-            const char *argumentList;
-            void *functionPointer;
+            const char* featureGroup;
+            const char* featureName;
+            const char* returnType;
+            const char* parameterList;
+            char* parameterTypes;
+            char* parameterNames;
+            void* functionPointer;
         };
 
         struct APLUGINLIBRARY_EXPORT PluginClassInfo
         {
-            const char *interfaceName;
-            const char *className;
-            void *createInstance;
-            void *deleteInstance;
+            const char* interfaceName;
+            const char* className;
+            void* createInstance;
+            void* deleteInstance;
         };
     }
 }

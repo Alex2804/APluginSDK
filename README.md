@@ -18,7 +18,7 @@ For each registered feature there is one PluginFeatureInfo object in the plugin.
 
 Features can be registered with the following macro:
 
-    A_PLUGIN_REGISTER_FEATURE(returnType, featureGroup, featureName, [argumentList]...)
+    A_PLUGIN_REGISTER_FEATURE(returnType, featureGroup, featureName, [parameterList]...)
     {
         // function body
     }

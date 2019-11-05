@@ -16,7 +16,7 @@ namespace apl
             ~FeatureManager();
 
             static PluginFeatureInfo *registerFeature(const char *featureGroup, const char *featureName,
-                                                      const char *returnType, const char *argumentList,
+                                                      const char *returnType, const char *parameterList,
                                                       void *functionPointer);
             static size_t getFeatureCount();
             static const PluginFeatureInfo *getFeatureInfo(size_t i);
