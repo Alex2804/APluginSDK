@@ -27,7 +27,7 @@ for example:
 
     #include "APluginLibrary/pluginapi.h" // this must be included
     
-    A_PLUGIN_REGISTER_FEATURE(int, group1, feature1, int x1, double y, const char\* x2)
+    A_PLUGIN_REGISTER_FEATURE(int, group1, feature1, int x1, double y, const char* x2)
     {
         std::cout << x2 << std::end;
         return x1 + y;
