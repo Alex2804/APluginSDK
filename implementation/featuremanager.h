@@ -10,7 +10,7 @@ namespace apl
 {
     namespace detail
     {
-        class APLUGINLIBRARY_NO_EXPORT FeatureManager final
+        class APLUGINSDK_NO_EXPORT FeatureManager final
         {
         public:
             ~FeatureManager();

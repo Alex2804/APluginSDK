@@ -5,7 +5,7 @@
 
 namespace apl {
     extern "C" {
-        struct APLUGINLIBRARY_EXPORT PluginFeatureInfo
+        struct APLUGINSDK_EXPORT PluginFeatureInfo
         {
             const char* featureGroup;
             const char* featureName;
@@ -16,7 +16,7 @@ namespace apl {
             void* functionPointer;
         };
 
-        struct APLUGINLIBRARY_EXPORT PluginClassInfo
+        struct APLUGINSDK_EXPORT PluginClassInfo
         {
             const char* interfaceName;
             const char* className;

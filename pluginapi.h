@@ -10,13 +10,13 @@ namespace apl
     {
         extern "C"
         {
-            APLUGINLIBRARY_EXPORT size_t getPluginFeatureCount();
-            APLUGINLIBRARY_EXPORT const apl::PluginFeatureInfo* getPluginFeatureInfo(size_t index);
-            APLUGINLIBRARY_EXPORT const apl::PluginFeatureInfo * const* getPluginFeatureInfos();
+            APLUGINSDK_EXPORT size_t getPluginFeatureCount();
+            APLUGINSDK_EXPORT const apl::PluginFeatureInfo* getPluginFeatureInfo(size_t index);
+            APLUGINSDK_EXPORT const apl::PluginFeatureInfo * const* getPluginFeatureInfos();
 
-            APLUGINLIBRARY_EXPORT size_t getPluginClassCount();
-            APLUGINLIBRARY_EXPORT const apl::PluginClassInfo* getPluginClassInfo(size_t index);
-            APLUGINLIBRARY_EXPORT const apl::PluginClassInfo* const* getPluginClassInfos();
+            APLUGINSDK_EXPORT size_t getPluginClassCount();
+            APLUGINSDK_EXPORT const apl::PluginClassInfo* getPluginClassInfo(size_t index);
+            APLUGINSDK_EXPORT const apl::PluginClassInfo* const* getPluginClassInfos();
         }
     }
 }

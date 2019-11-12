@@ -1,18 +1,25 @@
 #ifndef APLUGINSDK_MACROS_H
 #define APLUGINSDK_MACROS_H
 
-#if !defined(APLUGINLIBRARY_EXPORT) && defined(_WIN32)
-# define APLUGINLIBRARY_EXPORT  __declspec( dllexport )
-#elif !defined(APLUGINLIBRARY_EXPORT)
-# define APLUGINLIBRARY_EXPORT
+#ifndef APLUGINSDK_EXPORT
+# if defined(APLUGINLIBRARY_EXPORT)
+#  define APLUGINSDK_EXPORT APLUGINLIBRARY_EXPORT
+# elif defined(_WIN32)
+#  define APLUGINSDK_EXPORT __declspec( dllexport )
+# else
+#  define APLUGINSDK_EXPORT
+# endif
 #endif
 
-#if !defined(APLUGINLIBRARY_NO_EXPORT) && (defined(__unix__) || defined(__APPLE__))
-# define APLUGINLIBRARY_NO_EXPORT __attribute__((visibility("hidden")))
-#elif !defined(APLUGINLIBRARY_NO_EXPORT)
-# define APLUGINLIBRARY_NO_EXPORT
+#ifndef APLUGINSDK_NO_EXPORT
+# if defined(APLUGINLIBRARY_NO_EXPORT)
+#  define APLUGINSDK_NO_EXPORT APLUGINLIBRARY_NO_EXPORT
+# elif defined(__unix__) || defined(__APPLE__)
+#  define APLUGINSDK_NO_EXPORT __attribute__((visibility("hidden")))
+# else
+#  define APLUGINSDK_NO_EXPORT
+# endif
 #endif
-
 
 #define A_PLUGIN_FEATURE_NAMESPACE(featureGroup, featureName) \
     featureGroup##_feature_group::featureName##_feature_name::
