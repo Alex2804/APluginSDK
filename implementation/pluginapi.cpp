@@ -2,6 +2,22 @@
 # include "../pluginapi.h"
 #endif
 
+/**
+ * @param size The amount of memory to allocate in bytes
+ * @return The allocated memory or nullptr on failure
+ */
+void* apl::detail::allocatePluginMemory(size_t size)
+{
+    return malloc(size);
+}
+/**
+ * @param ptr The pointer with the memory to free
+ */
+void apl::detail::freePluginMemory(void *ptr)
+{
+    free(ptr);
+}
+
 size_t apl::detail::getPluginFeatureCount()
 {
     return apl::detail::FeatureManager::getFeatureCount();
