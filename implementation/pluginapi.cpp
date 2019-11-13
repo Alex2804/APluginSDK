@@ -2,11 +2,11 @@
 # include "../pluginapi.h"
 #endif
 
-void* apl::detail::allocatePluginMemory(size_t bytes)
+void* apl::allocateMemory(size_t size)
 {
-    return malloc(bytes);
+    return malloc(size);
 }
-void apl::detail::freePluginMemory(void *ptr)
+void apl::freeMemory(void *ptr)
 {
     free(ptr);
 }

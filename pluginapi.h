@@ -8,13 +8,16 @@
 
 namespace apl
 {
+    extern "C"
+    {
+        APLUGINSDK_EXPORT void* allocateMemory(size_t size);
+        APLUGINSDK_EXPORT void freeMemory(void* ptr);
+    }
+
     namespace detail
     {
         extern "C"
         {
-            APLUGINSDK_EXPORT void* allocatePluginMemory(size_t size);
-            APLUGINSDK_EXPORT void freePluginMemory(void* ptr);
-
             APLUGINSDK_EXPORT size_t getPluginFeatureCount();
             APLUGINSDK_EXPORT const apl::PluginFeatureInfo* getPluginFeatureInfo(size_t index);
             APLUGINSDK_EXPORT const apl::PluginFeatureInfo * const* getPluginFeatureInfos();
