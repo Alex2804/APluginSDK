@@ -22,18 +22,18 @@ std::pair<char*, char*> apl::detail::splitParameterList(const char* parameterLis
     tmpParameterList.push_back(','); // terminate with ',' to flush last type and name
     for(char current : tmpParameterList) {
         if(typeFront) {
-            if(current != ',' && (isalnum(current) || ispunct(current))) {
+            if(current != ',' && (std::isalnum(current) || std::ispunct(current))) {
                 typeString.push_back(current);
-            } else if(isspace(current) && typeString == "const") {
+            } else if(std::isspace(current) && typeString == "const") {
                 typeString.push_back(' ');
             } else if(current == '*' || current == '&') {
                 typeString.push_back(current);
                 typeFront = false;
-            } else if(isspace(current) && !isspace(last)) {
+            } else if(std::isspace(current) && !std::isspace(last)) {
                 typeFront = false;
             }
         } else {
-            if(current != ',' && (isalnum(current) || ispunct(current))) {
+            if(current != ',' && (std::isalnum(current) || std::ispunct(current))) {
                 tmpString.push_back(current);
             } else if(current == '*' || current == '&') {
                 if(!tmpString.empty() && typeString.back() != '*' && typeString.back() != '&') {
@@ -41,7 +41,7 @@ std::pair<char*, char*> apl::detail::splitParameterList(const char* parameterLis
                 }
                 typeString.append(tmpString).push_back(current);
                 tmpString.clear();
-            } else if((isspace(current) || current == ',') && tmpString == "const") {
+            } else if((std::isspace(current) || current == ',') && tmpString == "const") {
                 typeString.append(tmpString);
                 tmpString.clear();
             }
