@@ -6,9 +6,9 @@
 
 namespace apl
 {
-    constexpr int A_PLUGIN_API_VERSION_MAJOR = 1;
-    constexpr int A_PLUGIN_API_VERSION_MINOR = 0;
-    constexpr int A_PLUGIN_API_VERSION_PATCH = 0;
+    constexpr size_t A_PLUGIN_API_VERSION_MAJOR = 1;
+    constexpr size_t A_PLUGIN_API_VERSION_MINOR = 0;
+    constexpr size_t A_PLUGIN_API_VERSION_PATCH = 0;
 
     extern "C"
     {
