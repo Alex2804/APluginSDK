@@ -1,38 +1,46 @@
-#ifdef A_PLUGIN_SDK_EXCLUDE_DEFINITION
+#ifdef A_PLUGIN_SDK_EXCLUDE_DEFINITIONS
 # include "../pluginapi.h"
 #endif
 
+// when pluginapi.cpp is compiled, all other source files should be compiled too
+#include "infomanager.cpp"
+
 void* apl::allocateMemory(size_t size)
 {
-    return malloc(size);
+    return detail::allocateMemoryNotExported(size);
 }
 void apl::freeMemory(void *ptr)
 {
-    free(ptr);
+    detail::freeMemoryNotExported(ptr);
+}
+
+const apl::PluginInfo* apl::detail::getPluginInfo()
+{
+    return InfoManager::instance()->getPluginInfo();
 }
 
 size_t apl::detail::getPluginFeatureCount()
 {
-    return apl::detail::FeatureManager::getFeatureCount();
+    return getPluginFeatureCountNotExported();
 }
 const apl::PluginFeatureInfo* apl::detail::getPluginFeatureInfo(size_t index)
 {
-    return apl::detail::FeatureManager::getFeatureInfo(index);
+    return getPluginFeatureInfoNotExported(index);
 }
 const apl::PluginFeatureInfo * const* apl::detail::getPluginFeatureInfos()
 {
-    return apl::detail::FeatureManager::getFeatureInfos();
+    return getPluginFeatureInfosNotExported();
 }
 
 size_t apl::detail::getPluginClassCount()
 {
-    return apl::detail::FeatureManager::getClassCount();
+    return getPluginClassCountNotExported();
 }
 const apl::PluginClassInfo* apl::detail::getPluginClassInfo(size_t index)
 {
-    return apl::detail::FeatureManager::getClassInfo(index);
+    return getPluginClassInfoNotExported(index);
 }
 const apl::PluginClassInfo* const* apl::detail::getPluginClassInfos()
 {
-    return apl::detail::FeatureManager::getClassInfos();
+    return getPluginClassInfosNotExported();
 }
