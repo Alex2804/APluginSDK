@@ -11,7 +11,7 @@ Even though C++ types can be passed between plugin and main application, you sho
 ABI incompatibility.
 
 ---
-### pluginapi.h
+### <a name="pluginapi.h">pluginapi.h</a>
 pluginapi.h must be included to develop plugins.
 
 If a plugin consists of multiple source files, either A_PLUGIN_SDK_EXCLUDE_DEFINITIONS must always except once be
@@ -19,6 +19,10 @@ defined before pluginapi.h is included to prevent redefinitions of functions, or
 file (A_PLUGIN_SDK_EXCLUDE_DEFINITIONS must be defined) and A_PLUGIN_SDK_EXCLUDE_DEFINITIONS is defined always before
 pluginapi.h is included (you can also define it for the whole project).
 
+---
+### <a name="names_and_versions">Name and Version</a>
+Your can set the name of your plugin with the ```A_PLUGIN_SET_NAME(name)``` macro and the version with the
+```A_PLUGIN_SET_VERSION(major, minor, patch)``` macro.
 
 ---
 ### <a name="Feature">Feature</a>
