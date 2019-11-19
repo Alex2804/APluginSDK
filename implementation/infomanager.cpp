@@ -4,7 +4,7 @@
 #endif
 
 #include <string>
-#include <malloc.h>
+#include <cstdlib>
 
 apl::detail::InfoManager::InfoManager()
     : pluginInfo(new PluginInfo())
@@ -184,11 +184,11 @@ std::pair<char*, char*> apl::detail::splitParameterList(const char* parameterLis
 
 void* apl::detail::allocateMemoryNotExported(size_t size)
 {
-    return malloc(size);
+    return std::malloc(size);
 }
 void apl::detail::freeMemoryNotExported(void *ptr)
 {
-    free(ptr);
+    std::free(ptr);
 }
 
 size_t apl::detail::getPluginFeatureCountNotExported()
