@@ -31,8 +31,8 @@ namespace apl {
         struct APLUGINSDK_EXPORT PluginInfo
         {
             const char* pluginName;
-            int apiVersionMajor, apiVersionMinor, apiVersionPatch;
-            int pluginVersionMajor, pluginVersionMinor, pluginVersionPatch;
+            size_t apiVersionMajor, apiVersionMinor, apiVersionPatch;
+            size_t pluginVersionMajor, pluginVersionMinor, pluginVersionPatch;
 
             void*(*allocateMemory)(size_t size);
             void(*freeMemory)(void*);
