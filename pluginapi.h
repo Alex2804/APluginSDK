@@ -1,7 +1,7 @@
 #ifndef APLUGINSDK_PLUGINAPI_H
 #define APLUGINSDK_PLUGINAPI_H
 
-#include "APluginSDK/implementation/infomanager.h"
+#include "implementation/infomanager.h"
 #include "implementation/macros.h"
 
 namespace apl
