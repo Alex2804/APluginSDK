@@ -2,6 +2,8 @@
 #define APLUGINSDK_INFOMANAGER_H
 
 #include <vector>
+#include <string>
+#include <cstdlib>
 
 #include "../plugininfos.h"
 #include "macros.h"
@@ -41,19 +43,21 @@ namespace apl
             PluginInfo* pluginInfo;
         };
 
-        APLUGINSDK_NO_EXPORT std::pair<char*, char*> splitParameterList(const char* parameterList);
+        APLUGINSDK_NO_EXPORT inline std::pair<char*, char*> splitParameterList(const char* parameterList);
 
-        APLUGINSDK_NO_EXPORT void *allocateMemoryNotExported(size_t size);
-        APLUGINSDK_NO_EXPORT void freeMemoryNotExported(void *ptr);
+        APLUGINSDK_NO_EXPORT inline void *allocateMemoryNotExported(size_t size);
+        APLUGINSDK_NO_EXPORT inline void freeMemoryNotExported(void *ptr);
 
-        APLUGINSDK_NO_EXPORT size_t getPluginFeatureCountNotExported();
-        APLUGINSDK_NO_EXPORT const PluginFeatureInfo *getPluginFeatureInfoNotExported(size_t index);
-        APLUGINSDK_NO_EXPORT const PluginFeatureInfo *const *getPluginFeatureInfosNotExported();
+        APLUGINSDK_NO_EXPORT inline size_t getPluginFeatureCountNotExported();
+        APLUGINSDK_NO_EXPORT inline const PluginFeatureInfo *getPluginFeatureInfoNotExported(size_t index);
+        APLUGINSDK_NO_EXPORT inline const PluginFeatureInfo *const *getPluginFeatureInfosNotExported();
 
-        APLUGINSDK_NO_EXPORT size_t getPluginClassCountNotExported();
-        APLUGINSDK_NO_EXPORT const PluginClassInfo *getPluginClassInfoNotExported(size_t index);
-        APLUGINSDK_NO_EXPORT const PluginClassInfo *const *getPluginClassInfosNotExported();
+        APLUGINSDK_NO_EXPORT inline size_t getPluginClassCountNotExported();
+        APLUGINSDK_NO_EXPORT inline const PluginClassInfo *getPluginClassInfoNotExported(size_t index);
+        APLUGINSDK_NO_EXPORT inline const PluginClassInfo *const *getPluginClassInfosNotExported();
     }
 }
+
+#include "infomanager.ipp"
 
 #endif //APLUGINSDK_INFOMANAGER_H
