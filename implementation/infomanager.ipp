@@ -55,41 +55,4 @@ std::pair<char*, char*> apl::detail::splitParameterList(const char* parameterLis
     return {types, names};
 }
 
-// ============================================= not exported functions ============================================= //
-
-void* apl::detail::allocateMemoryNotExported(size_t size)
-{
-    return std::malloc(size);
-}
-void apl::detail::freeMemoryNotExported(void *ptr)
-{
-    std::free(ptr);
-}
-
-size_t apl::detail::getPluginFeatureCountNotExported()
-{
-    return InfoManager::instance()->getFeatureCount();
-}
-const apl::PluginFeatureInfo* apl::detail::getPluginFeatureInfoNotExported(size_t index)
-{
-    return InfoManager::instance()->getFeatureInfo(index);
-}
-const apl::PluginFeatureInfo * const* apl::detail::getPluginFeatureInfosNotExported()
-{
-    return InfoManager::instance()->getFeatureInfos();
-}
-
-size_t apl::detail::getPluginClassCountNotExported()
-{
-    return InfoManager::instance()->getClassCount();
-}
-const apl::PluginClassInfo* apl::detail::getPluginClassInfoNotExported(size_t index)
-{
-    return InfoManager::instance()->getClassInfo(index);
-}
-const apl::PluginClassInfo* const* apl::detail::getPluginClassInfosNotExported()
-{
-    return InfoManager::instance()->getClassInfos();
-}
-
 #endif //APLUGINSDK_INFOMANAGER_IPP
