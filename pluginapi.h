@@ -12,8 +12,8 @@ namespace apl
 
     extern "C"
     {
-        APLUGINSDK_EXPORT void* allocateMemory(size_t size);
-        APLUGINSDK_EXPORT void freeMemory(void* ptr);
+        APLUGINSDK_API void* allocateMemory(size_t size);
+        APLUGINSDK_API void freeMemory(void* ptr);
     }
 
     namespace detail
@@ -21,15 +21,15 @@ namespace apl
 
         extern "C"
         {
-            APLUGINSDK_EXPORT const PluginInfo* getPluginInfo();
+            APLUGINSDK_API const PluginInfo* getPluginInfo();
 
-            APLUGINSDK_EXPORT size_t getPluginFeatureCount();
-            APLUGINSDK_EXPORT const PluginFeatureInfo* getPluginFeatureInfo(size_t index);
-            APLUGINSDK_EXPORT const PluginFeatureInfo* const* getPluginFeatureInfos();
+            APLUGINSDK_API size_t getPluginFeatureCount();
+            APLUGINSDK_API const PluginFeatureInfo* getPluginFeatureInfo(size_t index);
+            APLUGINSDK_API const PluginFeatureInfo* const* getPluginFeatureInfos();
 
-            APLUGINSDK_EXPORT size_t getPluginClassCount();
-            APLUGINSDK_EXPORT const PluginClassInfo* getPluginClassInfo(size_t index);
-            APLUGINSDK_EXPORT const PluginClassInfo* const* getPluginClassInfos();
+            APLUGINSDK_API size_t getPluginClassCount();
+            APLUGINSDK_API const PluginClassInfo* getPluginClassInfo(size_t index);
+            APLUGINSDK_API const PluginClassInfo* const* getPluginClassInfos();
         }
     }
 }

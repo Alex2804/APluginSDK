@@ -21,6 +21,12 @@
 # endif
 #endif
 
+#ifdef A_PLUGIN_SDK_DONT_EXPORT_API
+# define APLUGINSDK_API APLUGINSDK_NO_EXPORT
+#else
+# define APLUGINSDK_API APLUGINSDK_EXPORT
+#endif
+
 #define __A_PLUGIN_NAME_OPEN_NAMESPACE__(pluginName) \
     namespace __apl_plugin_names__ { namespace plugin_name_##pluginName {
 #define __A_PLUGIN_NAME_CLOSE_NAMESPACE__ \
