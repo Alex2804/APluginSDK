@@ -51,7 +51,7 @@ for example:
 A class is a normal C++ class which is derived from an interface and implements its virtual methods.  
 For each registered class there is one PluginClassInfo object in the plugin.
 
-There is no guarantee that plugins with different interfaces but the same interface names will be loaded.
+There is no guarantee that there are no plugins with different interfaces but the same interface names.
 
 Classes can be registered with the following macro:
 
@@ -72,7 +72,7 @@ for example:
     };
 <!-- tsk -->
     // whatever_plugin.cpp
-    #include "APluginLibrary/pluginapi.h" // this must be included
+    #include "APluginSDK/pluginapi.h" // this must be included
     #include "path/to/interface.h"
     
     class Implementation : public Interface
