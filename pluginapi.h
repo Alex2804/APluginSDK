@@ -18,7 +18,6 @@ namespace apl
 
     namespace detail
     {
-
         extern "C"
         {
             APLUGINSDK_API const PluginInfo* getPluginInfo();
@@ -119,5 +118,19 @@ A_PLUGIN_SET_NAME(A_PLUGIN_NAME)
 # endif
 A_PLUGIN_SET_VERSION(A_PLUGIN_VERSION_MAJOR, A_PLUGIN_VERSION_MINOR, A_PLUGIN_VERSION_PATCH)
 #endif
+
+namespace apl
+{
+    namespace debug
+    {
+        extern "C"
+        {
+#ifdef APLUGINSDK_DEBUG
+            static size_t allocationCount = 0;
+            static size_t freeCount = 0;
+#endif //APLUGINSDK_DEBUG
+        }
+    }
+}
 
 #endif //APLUGINSDK_PLUGINAPI_H

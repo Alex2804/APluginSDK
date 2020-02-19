@@ -7,10 +7,16 @@
 
 void* apl::allocateMemory(size_t size)
 {
+#ifdef APLUGINSDK_DEBUG
+    debug::allocationCount += 1;
+#endif //APLUGINSDK_DEBUG
     return detail::allocateMemoryNotExported(size);
 }
 void apl::freeMemory(void *ptr)
 {
+#ifdef APLUGINSDK_DEBUG
+    debug::freeCount += 1;
+#endif //APLUGINSDK_DEBUG
     detail::freeMemoryNotExported(ptr);
 }
 
