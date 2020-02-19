@@ -121,10 +121,10 @@ namespace apl
     {
         extern "C"
         {
-#ifdef APLUGINSDK_DEBUG
+#ifdef A_PLUGIN_SDK_DEBUG
             static size_t allocationCount = 0;
             static size_t freeCount = 0;
-#endif //APLUGINSDK_DEBUG
+#endif //A_PLUGIN_SDK_DEBUG
         }
     }
 }
