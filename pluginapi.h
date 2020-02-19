@@ -33,6 +33,24 @@ namespace apl
     }
 }
 
+#ifdef A_PLUGIN_SDK_DEBUG
+namespace apl
+{
+    namespace debug
+    {
+        extern "C"
+        {
+            extern size_t allocationCount;
+            extern size_t freeCount;
+        }
+    }
+}
+#endif //A_PLUGIN_SDK_DEBUG
+
+#ifndef A_PLUGIN_SDK_EXCLUDE_DEFINITIONS
+# include "implementation/pluginapi.cpp"
+#endif
+
 #define A_PLUGIN_SET_NAME(pluginName)                                                                                  \
     __A_PLUGIN_NAME_OPEN_NAMESPACE__(pluginName)                                                                       \
         class __A_PLUGIN_NAME_NAME__(pluginName)                                                                       \
@@ -113,24 +131,6 @@ A_PLUGIN_SET_NAME(A_PLUGIN_NAME)
 #  define A_PLUGIN_VERSION_PATCH 0
 # endif
 A_PLUGIN_SET_VERSION(A_PLUGIN_VERSION_MAJOR, A_PLUGIN_VERSION_MINOR, A_PLUGIN_VERSION_PATCH)
-#endif
-
-namespace apl
-{
-    namespace debug
-    {
-        extern "C"
-        {
-#ifdef A_PLUGIN_SDK_DEBUG
-            static size_t allocationCount = 0;
-            static size_t freeCount = 0;
-#endif //A_PLUGIN_SDK_DEBUG
-        }
-    }
-}
-
-#ifndef A_PLUGIN_SDK_EXCLUDE_DEFINITIONS
-# include "implementation/pluginapi.cpp"
 #endif
 
 #endif //APLUGINSDK_PLUGINAPI_H
