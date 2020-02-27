@@ -14,9 +14,9 @@ ABI incompatibility.
 ### <a name="pluginapi.h">pluginapi.h</a>
 pluginapi.h must be included to develop plugins.
 
-If a plugin consists of multiple source files, either A_PLUGIN_SDK_EXCLUDE_DEFINITIONS must always except once be
+If a plugin consists of multiple source files, either A_PLUGIN_SDK_EXCLUDE_IMPLEMENTATION must always except once be
 defined before pluginapi.h is included to prevent redefinitions of functions and classes, or pluginapi.cpp is compiled as
-source file and A_PLUGIN_SDK_EXCLUDE_DEFINITIONS is defined always before pluginapi.h is included (or you define it
+source file and A_PLUGIN_SDK_EXCLUDE_IMPLEMENTATION is defined always before pluginapi.h is included (or you define it
 for the whole project).
 
 ---

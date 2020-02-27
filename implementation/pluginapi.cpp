@@ -1,4 +1,4 @@
-#ifdef A_PLUGIN_SDK_EXCLUDE_DEFINITIONS
+#ifdef A_PLUGIN_SDK_EXCLUDE_IMPLEMENTATION
 # include "../pluginapi.h"
 #endif
 

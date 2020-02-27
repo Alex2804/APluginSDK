@@ -47,7 +47,7 @@ namespace apl
 }
 #endif //A_PLUGIN_SDK_DEBUG
 
-#ifndef A_PLUGIN_SDK_EXCLUDE_DEFINITIONS
+#ifndef A_PLUGIN_SDK_EXCLUDE_IMPLEMENTATION
 # include "implementation/pluginapi.cpp"
 #endif
 
