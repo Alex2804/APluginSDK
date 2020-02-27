@@ -1,5 +1,5 @@
 #ifdef A_PLUGIN_SDK_EXCLUDE_IMPLEMENTATION
-#include "infomanager.h"
+# include "infomanager.h"
 # include "../pluginapi.h"
 #endif
 
