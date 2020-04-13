@@ -37,13 +37,13 @@ namespace apl {
             void*(*allocateMemory)(size_t size);
             void(*freeMemory)(void*);
 
-            size_t(*getPluginFeatureCount)();
-            const PluginFeatureInfo*(*getPluginFeatureInfo)(size_t index);
-            const PluginFeatureInfo * const*(*getPluginFeatureInfos)();
+            size_t(*getFeatureCount)();
+            const PluginFeatureInfo*(*getFeatureInfo)(size_t index);
+            const PluginFeatureInfo * const*(*getFeatureInfos)();
 
-            size_t(*getPluginClassCount)();
-            const PluginClassInfo*(*getPluginClassInfo)(size_t index);
-            const PluginClassInfo* const*(*getPluginClassInfos)();
+            size_t(*getClassCount)();
+            const PluginClassInfo*(*getClassInfo)(size_t index);
+            const PluginClassInfo* const*(*getClassInfos)();
         };
     }
 }

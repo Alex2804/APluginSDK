@@ -51,7 +51,8 @@ for example:
 A class is a normal C++ class which is derived from an interface and implements its virtual methods.  
 For each registered class there is one PluginClassInfo object in the plugin.
 
-There is no guarantee that there are no plugins with different interfaces but the same interface names.
+There is no guarantee that there are no plugins with different interfaces but the same interface names.  
+Classes should be marked with **APLUGINSDK_NO_EXPORT**!
 
 Classes can be registered with the following macro:
 
@@ -75,7 +76,7 @@ for example:
     #include "APluginSDK/pluginapi.h" // this must be included
     #include "path/to/interface.h"
     
-    class Implementation : public Interface
+    class APLUGINSDK_NO_EXPORT Implementation : public Interface
     {
     public:
         int function1(int x1, int x2) override;

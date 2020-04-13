@@ -19,13 +19,13 @@ apl::detail::InfoManager::InfoManager()
     pluginInfo->allocateMemory = apl::detail::allocateMemoryNotExported;
     pluginInfo->freeMemory = apl::detail::freeMemoryNotExported;
 
-    pluginInfo->getPluginFeatureCount = apl::detail::getPluginFeatureCountNotExported;
-    pluginInfo->getPluginFeatureInfo = apl::detail::getPluginFeatureInfoNotExported;
-    pluginInfo->getPluginFeatureInfos = apl::detail::getPluginFeatureInfosNotExported;
+    pluginInfo->getFeatureCount = apl::detail::getPluginFeatureCountNotExported;
+    pluginInfo->getFeatureInfo = apl::detail::getPluginFeatureInfoNotExported;
+    pluginInfo->getFeatureInfos = apl::detail::getPluginFeatureInfosNotExported;
 
-    pluginInfo->getPluginClassCount = apl::detail::getPluginClassCountNotExported;
-    pluginInfo->getPluginClassInfo = apl::detail::getPluginClassInfoNotExported;
-    pluginInfo->getPluginClassInfos = apl::detail::getPluginClassInfosNotExported;
+    pluginInfo->getClassCount = apl::detail::getPluginClassCountNotExported;
+    pluginInfo->getClassInfo = apl::detail::getPluginClassInfoNotExported;
+    pluginInfo->getClassInfos = apl::detail::getPluginClassInfosNotExported;
 }
 apl::detail::InfoManager::~InfoManager()
 {
