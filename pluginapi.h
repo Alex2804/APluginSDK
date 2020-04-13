@@ -75,7 +75,7 @@ namespace apl
         };                                                                                                             \
                                                                                                                        \
         apl::PluginFeatureInfo* __A_PLUGIN_FEATURE_NAME__(featureGroup, featureName)::feature_info =                   \
-            apl::detail::InfoManager::registerFeature(#featureGroup, #featureName, #returnType, #__VA_ARGS__,          \
+            apl::detail::InfoManager::registerFeature(#featureGroup, #featureName, #returnType, "" #__VA_ARGS__,     \
                 reinterpret_cast<void*>(__A_PLUGIN_FEATURE_NAME__(featureGroup, featureName)::featureBody));           \
     __A_PLUGIN_FEATURE_CLOSE_NAMESPACE__                                                                               \
                                                                                                                        \
