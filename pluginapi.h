@@ -6,7 +6,7 @@
 
 namespace apl
 {
-    constexpr size_t A_PLUGIN_API_VERSION_MAJOR = 1;
+    constexpr size_t A_PLUGIN_API_VERSION_MAJOR = 2;
     constexpr size_t A_PLUGIN_API_VERSION_MINOR = 0;
     constexpr size_t A_PLUGIN_API_VERSION_PATCH = 0;
 
@@ -21,14 +21,6 @@ namespace apl
         extern "C"
         {
             APLUGINSDK_API const PluginInfo* getPluginInfo();
-
-            APLUGINSDK_API size_t getPluginFeatureCount();
-            APLUGINSDK_API const PluginFeatureInfo* getPluginFeatureInfo(size_t index);
-            APLUGINSDK_API const PluginFeatureInfo* const* getPluginFeatureInfos();
-
-            APLUGINSDK_API size_t getPluginClassCount();
-            APLUGINSDK_API const PluginClassInfo* getPluginClassInfo(size_t index);
-            APLUGINSDK_API const PluginClassInfo* const* getPluginClassInfos();
         }
     }
 }
