@@ -45,7 +45,7 @@ namespace apl
 
 #define A_PLUGIN_SET_NAME(pluginName)                                                                                  \
     __A_PLUGIN_NAME_OPEN_NAMESPACE__(pluginName)                                                                       \
-        class __A_PLUGIN_NAME_NAME__(pluginName)                                                                       \
+        class APLUGINSDK_NO_EXPORT __A_PLUGIN_NAME_NAME__(pluginName)                                                  \
         {                                                                                                              \
         public:                                                                                                        \
             static const char* plugin_name;                                                                            \
@@ -56,7 +56,7 @@ namespace apl
 
 #define A_PLUGIN_SET_VERSION(versionMajor, versionMinor, versionPatch)                                                 \
     __A_PLUGIN_VERSION_OPEN_NAMESPACE__(versionMajor, versionMinor, versionPatch)                                      \
-        class __A_PLUGIN_VERSION_NAME__(versionMajor, versionMinor, versionPatch)                                      \
+        class APLUGINSDK_NO_EXPORT __A_PLUGIN_VERSION_NAME__(versionMajor, versionMinor, versionPatch)                 \
         {                                                                                                              \
         public:                                                                                                        \
             static size_t plugin_version_major;                                                                        \
@@ -67,7 +67,7 @@ namespace apl
 
 #define A_PLUGIN_REGISTER_FEATURE(returnType, featureGroup, featureName, ...)                                          \
     __A_PLUGIN_FEATURE_OPEN_NAMESPACE__(featureGroup, featureName)                                                     \
-        class __A_PLUGIN_FEATURE_NAME__(featureGroup, featureName)                                                     \
+        class APLUGINSDK_NO_EXPORT __A_PLUGIN_FEATURE_NAME__(featureGroup, featureName)                                \
         {                                                                                                              \
         public:                                                                                                        \
             static apl::PluginFeatureInfo* feature_info;                                                               \
@@ -85,7 +85,7 @@ namespace apl
 
 #define A_PLUGIN_REGISTER_CLASS(interfaceName, className)                                                              \
     __A_PLUGIN_CLASS_OPEN_NAMESPACE__(interfaceName, className)                                                        \
-        class __A_PLUGIN_CLASS_NAME__(interfaceName, className)                                                        \
+        class APLUGINSDK_NO_EXPORT __A_PLUGIN_CLASS_NAME__(interfaceName, className)                                   \
         {                                                                                                              \
         public:                                                                                                        \
             static apl::PluginClassInfo* info;                                                                         \
