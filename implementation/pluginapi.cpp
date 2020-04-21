@@ -19,6 +19,11 @@ namespace apl
 }
 #endif //A_PLUGIN_SDK_DEBUG
 
+/**
+ * Allocates memory inside the plugin which can be freed by apl::freeMemory.
+ * @param size The number of bytes to allocate
+ * @return The allocated memory.
+ */
 void* apl::allocateMemory(size_t size)
 {
 #ifdef A_PLUGIN_SDK_DEBUG
@@ -27,6 +32,10 @@ void* apl::allocateMemory(size_t size)
 #endif //A_PLUGIN_SDK_DEBUG
     return detail::allocateMemoryNotExported(size);
 }
+/**
+ * Frees memory which was allocated by this plugin.
+ * @param ptr A pointer to the memory to free.
+ */
 void apl::freeMemory(void *ptr)
 {
 #ifdef A_PLUGIN_SDK_DEBUG
