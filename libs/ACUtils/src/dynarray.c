@@ -75,7 +75,7 @@ ST_FUNC void* aCUtilsDynArrayConstruct(size_t typeSize)
         prototype->size = 0;
         prototype->calculateCapacity = aCUtilsCalculateCapacityDefault;
         prototype->capacity = prototype->calculateCapacity(prototype->size);
-        prototype->buffer = malloc(prototype->capacity * typeSize);
+        prototype->buffer = (char*) malloc(prototype->capacity * typeSize);
         if(prototype->buffer == NULL) {
             free(prototype);
         }
@@ -104,7 +104,7 @@ ST_FUNC bool aCUtilsDynArrayReserve(void *dynArray, size_t reserveSize, size_t t
             if(prototype->calculateCapacity != NULL) {
                 size_t aimedCapacity = prototype->calculateCapacity(reserveSize);
                 if(aimedCapacity >= reserveSize) {
-                    char* tmpBuffer = realloc(prototype->buffer, aimedCapacity * typeSize);
+                    char* tmpBuffer = (char*) realloc(prototype->buffer, aimedCapacity * typeSize);
                     if(tmpBuffer != NULL) {
                         prototype->capacity = aimedCapacity;
                         prototype->buffer = tmpBuffer;
