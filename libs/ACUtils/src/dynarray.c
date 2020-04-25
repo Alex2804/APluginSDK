@@ -45,9 +45,9 @@
     #define free(ptr) aCUtilsDynArrayTestFree(ptr)
 #endif
 
-struct _aCUtilsDynArrayPrototype
+struct aCUtilsDynArrayPrototype
 {
-    void* buffer;
+    char* buffer;
     size_t size;
     size_t capacity;
     size_t(*calculateCapacity)(size_t);
@@ -70,7 +70,7 @@ size_t aCUtilsCalculateCapacityDefault(size_t requiredSize) {
 
 ST_FUNC void* aCUtilsDynArrayConstruct(size_t typeSize)
 {
-    struct _aCUtilsDynArrayPrototype* prototype = (struct _aCUtilsDynArrayPrototype*) malloc(sizeof(struct _aCUtilsDynArrayPrototype));
+    struct aCUtilsDynArrayPrototype* prototype = (struct aCUtilsDynArrayPrototype*) malloc(sizeof(struct aCUtilsDynArrayPrototype));
     if(prototype != NULL) {
         prototype->size = 0;
         prototype->calculateCapacity = aCUtilsCalculateCapacityDefault;
@@ -86,25 +86,25 @@ ST_FUNC void* aCUtilsDynArrayConstruct(size_t typeSize)
 ST_FUNC void aCUtilsDynArrayDestruct(void *dynArray)
 {
     if(dynArray != NULL) {
-        free(((struct _aCUtilsDynArrayPrototype*) dynArray)->buffer);
+        free(((struct aCUtilsDynArrayPrototype*) dynArray)->buffer);
         free(dynArray);
     }
 }
 
 ST_FUNC size_t aCUtilsDynArraySize(void *dynArray)
 {
-    return (dynArray == NULL) ? 0 : ((struct _aCUtilsDynArrayPrototype*) dynArray)->size;
+    return (dynArray == NULL) ? 0 : ((struct aCUtilsDynArrayPrototype*) dynArray)->size;
 }
 
 ST_FUNC bool aCUtilsDynArrayReserve(void *dynArray, size_t reserveSize, size_t typeSize)
 {
     if(dynArray != NULL) {
-        struct _aCUtilsDynArrayPrototype* prototype = (struct _aCUtilsDynArrayPrototype*) dynArray;
+        struct aCUtilsDynArrayPrototype* prototype = (struct aCUtilsDynArrayPrototype*) dynArray;
         if(prototype->capacity < reserveSize || prototype->buffer == NULL) {
             if(prototype->calculateCapacity != NULL) {
                 size_t aimedCapacity = prototype->calculateCapacity(reserveSize);
                 if(aimedCapacity >= reserveSize) {
-                    void* tmpBuffer = realloc(prototype->buffer, aimedCapacity * typeSize);
+                    char* tmpBuffer = realloc(prototype->buffer, aimedCapacity * typeSize);
                     if(tmpBuffer != NULL) {
                         prototype->capacity = aimedCapacity;
                         prototype->buffer = tmpBuffer;
@@ -122,7 +122,7 @@ ST_FUNC bool aCUtilsDynArrayReserve(void *dynArray, size_t reserveSize, size_t t
 ST_FUNC bool aCUtilsDynArrayShrinkToFit(void *dynArray, size_t typeSize)
 {
     if(dynArray != NULL) {
-        struct _aCUtilsDynArrayPrototype* prototype = (struct _aCUtilsDynArrayPrototype*) dynArray;
+        struct aCUtilsDynArrayPrototype* prototype = (struct aCUtilsDynArrayPrototype*) dynArray;
         if(prototype->calculateCapacity != NULL) {
             if(prototype->capacity > prototype->calculateCapacity(prototype->size)) {
                 size_t capacityBackup = prototype->capacity;
@@ -143,7 +143,7 @@ ST_FUNC bool aCUtilsDynArrayShrinkToFit(void *dynArray, size_t typeSize)
 ST_FUNC bool aCUtilsDynArrayClear(void *dynArray, size_t typeSize)
 {
     if(dynArray != NULL) {
-        ((struct _aCUtilsDynArrayPrototype*) dynArray)->size = 0;
+        ((struct aCUtilsDynArrayPrototype*) dynArray)->size = 0;
         return aCUtilsDynArrayShrinkToFit(dynArray, typeSize);
     }
     return false;
@@ -155,7 +155,7 @@ ST_FUNC bool aCUtilsDynArrayShiftElements(void *dynArray, size_t index, size_t c
     if(index >= dynArraySize) {
         return true;
     } else if(aCUtilsDynArrayReserve(dynArray, dynArraySize + count, typeSize)) {
-        void *buffer = ((struct _aCUtilsDynArrayPrototype*) dynArray)->buffer + (index * typeSize);
+        char *buffer = ((struct aCUtilsDynArrayPrototype*) dynArray)->buffer + (index * typeSize);
         memmove(buffer + (count * typeSize), buffer, (dynArraySize - index) * typeSize);
         return true;
     }
@@ -164,7 +164,7 @@ ST_FUNC bool aCUtilsDynArrayShiftElements(void *dynArray, size_t index, size_t c
 ST_FUNC bool aCUtilsDynArrayPrepareInsertion(void* dynArray, size_t *index, size_t valueCount, size_t typeSize)
 {
     if(dynArray != NULL && valueCount > 0) {
-        struct _aCUtilsDynArrayPrototype* prototype = (struct _aCUtilsDynArrayPrototype*) dynArray;
+        struct aCUtilsDynArrayPrototype* prototype = (struct aCUtilsDynArrayPrototype*) dynArray;
         if(*index >= prototype->size) {
             *index = prototype->size;
             if(!aCUtilsDynArrayReserve(dynArray, prototype->size + valueCount, typeSize)) {
@@ -184,7 +184,7 @@ ST_FUNC bool aCUtilsDynArrayInsertArray(void* dynArray, size_t index, void* arra
         arraySize = 0;
     }
     if(aCUtilsDynArrayPrepareInsertion(dynArray, &index, arraySize, typeSize)) {
-        struct _aCUtilsDynArrayPrototype* prototype = (struct _aCUtilsDynArrayPrototype*) dynArray;
+        struct aCUtilsDynArrayPrototype* prototype = (struct aCUtilsDynArrayPrototype*) dynArray;
         memcpy(prototype->buffer + (index * typeSize), array, arraySize * typeSize);
         return true;
     }
@@ -193,7 +193,7 @@ ST_FUNC bool aCUtilsDynArrayInsertArray(void* dynArray, size_t index, void* arra
 
 ST_FUNC void aCUtilsDynArrayRemove(void* dynArray, size_t index, size_t count, size_t typeSize)
 {
-    struct _aCUtilsDynArrayPrototype* prototype = (struct _aCUtilsDynArrayPrototype*) dynArray;
+    struct aCUtilsDynArrayPrototype* prototype = (struct aCUtilsDynArrayPrototype*) dynArray;
     if(dynArray != NULL && count > 0 && index >= 0 && index < prototype->size) {
         if(index + count <= prototype->size) {
             memmove(prototype->buffer + (index * typeSize), prototype->buffer + ((index + count) * typeSize), (prototype->size - index - count) * typeSize);
