@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/libcheck/check
+	branch = master
+	commit = 55d8ee22d4d0cefa4456a0ba26819b9e5c75b615
+	parent = b54312d677bf64c2d13d344d3253b6448cc90c49
+	method = merge
+	cmdver = 0.4.1
