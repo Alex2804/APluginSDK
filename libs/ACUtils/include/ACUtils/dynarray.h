@@ -1,5 +1,5 @@
-#ifndef CUTILS_DYNARRAY_H
-#define CUTILS_DYNARRAY_H
+#ifndef ACUTILS_DYNARRAY_H
+#define ACUTILS_DYNARRAY_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -216,7 +216,7 @@
 /**
  * Retrieves the element at index in dynArray.
  *
- * No Boundchecking is performed. If the index is out of bounds, the ends in undefined behavior!
+ * No bound checking is performed. The behavior is undefined if index is out of bounds!
  *
  * @param dynArray The dynamic array to get the element from.
  * @param index The index in dynArray to get the element of.
@@ -225,6 +225,7 @@
  */
 #define aDynArrayGet(dynArray, index) \
     (dynArray)->buffer[index]
+
 
 #define A_C_UTILS_DYN_ARRAY_IMPLEMENT
 #if A_C_UTILS_ONE_SOURCE
@@ -239,8 +240,8 @@
     bool aCUtilsDynArrayClear(void *dynArray, size_t typeSize);
     bool aCUtilsDynArrayShiftElements(void *dynArray, size_t index, size_t count, size_t typeSize);
     bool aCUtilsDynArrayPrepareInsertion(void* dynArray, size_t *index, size_t valueCount, size_t typeSize);
-    bool aCUtilsDynArrayInsertArray(void* dynArray, size_t index, void* array, size_t arraySize, size_t typeSize);
-    void aCUtilsDynArrayRemove(void* dynArray, size_t index, size_t count, size_t typeSize);
+    bool aCUtilsDynArrayInsertArray(void *dynArray, size_t index, const void *array, size_t arraySize, size_t typeSize);
+    void aCUtilsDynArrayRemove(void *dynArray, size_t index, size_t count, size_t typeSize);
 #endif
 
-#endif /* CUTILS_DYNARRAY_H */
+#endif /* ACUTILS_DYNARRAY_H */

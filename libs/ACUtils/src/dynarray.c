@@ -178,7 +178,7 @@ ST_FUNC bool aCUtilsDynArrayPrepareInsertion(void* dynArray, size_t *index, size
     }
     return valueCount == 0;
 }
-ST_FUNC bool aCUtilsDynArrayInsertArray(void* dynArray, size_t index, void* array, size_t arraySize, size_t typeSize)
+ST_FUNC bool aCUtilsDynArrayInsertArray(void *dynArray, size_t index, const void *array, size_t arraySize, size_t typeSize)
 {
     if(array == NULL) {
         arraySize = 0;
@@ -191,7 +191,7 @@ ST_FUNC bool aCUtilsDynArrayInsertArray(void* dynArray, size_t index, void* arra
     return false;
 }
 
-ST_FUNC void aCUtilsDynArrayRemove(void* dynArray, size_t index, size_t count, size_t typeSize)
+ST_FUNC void aCUtilsDynArrayRemove(void *dynArray, size_t index, size_t count, size_t typeSize)
 {
     struct aCUtilsDynArrayPrototype* prototype = (struct aCUtilsDynArrayPrototype*) dynArray;
     if(dynArray != NULL && count > 0 && index >= 0 && index < prototype->size) {
