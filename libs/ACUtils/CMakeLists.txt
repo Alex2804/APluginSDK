@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(ACUtils VERSION 0.1)
+project(ACUtilsTest VERSION 0.1)
 
-include_directories(include)
+add_subdirectory(tests/libs/check)
 
-if(${ACUtilsTest})
-    add_subdirectory(tests)
-endif()
+add_executable(ACUtilsTest tests/src/test_dynarray.c src/dynarray.c)
+set_target_properties(ACUtilsTest PROPERTIES C_STANDARD 90 C_EXTENSIONS off)
+target_compile_definitions(ACUtilsTest PUBLIC PRIVATE_ACUTILS_TEST=1 ACUTILS_ONE_SOURCE=0)
+target_include_directories(ACUtilsTest PUBLIC include)
+target_link_libraries(ACUtilsTest check)
