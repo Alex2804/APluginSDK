@@ -22,13 +22,13 @@ for the whole project).
 ---
 ### <a name="names_and_versions">Name and Version</a>
 Your can set the name of your plugin with the ```A_PLUGIN_SET_NAME(name)``` macro and the version with the
-```A_PLUGIN_SET_VERSION(major, minor, patch)``` macro.
+```A_PLUGIN_SET_VERSION(major, minor, patch)``` macro. These macros can only be used once.
 
 ---
 ### <a name="Feature">Feature</a>
 A feature is a function that has a feature name and belongs to a feature group. A feature also has a return type
 and an argument list.  
-For each registered feature there is one PluginFeatureInfo object in the plugin.
+For each registered feature there is one APluginFeatureInfo object in the plugin.
 
 Features can be registered with the following macro:
 
@@ -49,7 +49,7 @@ for example:
 ---
 ### <a name="Class">Class</a>
 A class is a normal C++ class which is derived from an interface and implements its virtual methods.  
-For each registered class there is one PluginClassInfo object in the plugin.
+For each registered class there is one APluginClassInfo object in the plugin.
 
 There is no guarantee that there are no plugins with different interfaces but the same interface names.  
 Classes should be marked with **APLUGINSDK_NO_EXPORT**!
