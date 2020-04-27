@@ -6,6 +6,7 @@
 #include <math.h>
 
 #include "macros.h"
+#include "types.h"
 
 /**
  * Creates the struct declaration for an dynamic array.
