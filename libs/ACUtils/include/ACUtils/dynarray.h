@@ -5,7 +5,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "definitions.h"
+#include "macros.h"
 
 /**
  * Creates the struct declaration for an dynamic array.
@@ -27,7 +27,7 @@
  * @return A Pointer to the constructed Array.
  */
 #define aDynArrayConstruct(ArrayType) \
-    ((ArrayType*) aCUtilsDynArrayConstruct(sizeof(*((ArrayType*)NULL)->buffer)))
+    ((ArrayType*) private_ACUtils_DynArray_construct(sizeof(*((ArrayType*)NULL)->buffer)))
 
 /**
  * Destructs the dynamic array and releases all held resources.
@@ -35,14 +35,14 @@
  * @param dynArray The dynamic array to destruct.
  */
 #define aDynArrayDestruct(dynArray) \
-    aCUtilsDynArrayDestruct(dynArray)
+    private_ACUtils_DynArray_destruct(dynArray)
 
 /**
  * @param dynArray The dynamic array to get the size from.
  * @return The size (number of elements) of the passed dynamic array.
  */
 #define aDynArraySize(dynArray) \
-    aCUtilsDynArraySize(dynArray)
+    private_ACUtils_DynArray_size(dynArray)
 
 /**
  * Resize dynArray, that it can hold at least reserveSize count items without resizing.
@@ -60,7 +60,7 @@
  * @return True if dynArray can hold at least reserveSize count elements after this operation, false if not.
  */
 #define aDynArrayReserve(dynArray, reserveSize) \
-    aCUtilsDynArrayReserve(dynArray, reserveSize, sizeof(*(dynArray)->buffer))
+    private_ACUtils_DynArray_reserve(dynArray, reserveSize, sizeof(*(dynArray)->buffer))
 
 /**
  * Resize dynArray to the minimum size to fit its content (dependent on the resize strategy, which means that the
@@ -71,7 +71,7 @@
  * @return True if dynArray is small as possible or was successfully resized, false if not.
  */
 #define aDynArrayShrinkToFit(dynArray) \
-    aCUtilsDynArrayShrinkToFit(dynArray, sizeof(*(dynArray)->buffer))
+    private_ACUtils_DynArray_shrinkToFit(dynArray, sizeof(*(dynArray)->buffer))
 
 /**
  * Clears the content of dynArray and calls dynArrayShrinkToFit(dynArray) after that.
@@ -82,7 +82,7 @@
  * but not shrinked.
  */
 #define aDynArrayClear(dynArray) \
-    aCUtilsDynArrayClear(dynArray, sizeof(*(dynArray)->buffer))
+    private_ACUtils_DynArray_clear(dynArray, sizeof(*(dynArray)->buffer))
 
 /**
  * Inserts the value into dynArray at index. If index is bigger or equal to the size of
@@ -97,7 +97,7 @@
  */
 #define aDynArrayInsert(dynArray, index, value) ({ \
     size_t aDynArrayInsertIndex = (index); \
-    bool aDynArrayInsertReturnValue = aCUtilsDynArrayPrepareInsertion(dynArray, &aDynArrayInsertIndex, 1, sizeof(*(dynArray)->buffer)); \
+    bool aDynArrayInsertReturnValue = private_ACUtils_DynArray_prepareInsertion(dynArray, &aDynArrayInsertIndex, 1, sizeof(*(dynArray)->buffer)); \
     if(aDynArrayInsertReturnValue) { \
         (dynArray)->buffer[aDynArrayInsertIndex] = (value); \
     } \
@@ -120,7 +120,7 @@
 #define aDynArrayInsertArray(dynArray, index, array, arraySize) ({ \
     bool aDynArrayInsertArrayReturnValue = false; \
     if(sizeof(*(dynArray)->buffer) == sizeof(*array)) { \
-        aDynArrayInsertArrayReturnValue = aCUtilsDynArrayInsertArray(dynArray, index, array, arraySize, sizeof(*(dynArray)->buffer)); \
+        aDynArrayInsertArrayReturnValue = private_ACUtils_DynArray_insertArray(dynArray, index, array, arraySize, sizeof(*(dynArray)->buffer)); \
     } \
     aDynArrayInsertArrayReturnValue; \
 })
@@ -211,7 +211,7 @@
  * @param count The number of elements to remove starting at index.
  */
 #define aDynArrayRemove(dynArray, index, count) \
-    aCUtilsDynArrayRemove(dynArray, index, count, sizeof(*(dynArray)->buffer))
+    private_ACUtils_DynArray_remove(dynArray, index, count, sizeof(*(dynArray)->buffer))
 
 /**
  * Retrieves the element at index in dynArray.
@@ -227,21 +227,20 @@
     (dynArray)->buffer[index]
 
 
-#define A_C_UTILS_DYN_ARRAY_IMPLEMENT
-#if A_C_UTILS_ONE_SOURCE
+#define PRIVATE_ACUTILS_DYN_ARRAY_IMPLEMENT
+#if ACUTILS_ONE_SOURCE
 #   include "../../src/dynarray.c"
 #else
-    size_t aCUtilsCalculateCapacityGeneric(size_t requiredSize, size_t minCapacity, size_t maxCapacity, size_t multiplier);
-    void* aCUtilsDynArrayConstruct(size_t typeSize);
-    void aCUtilsDynArrayDestruct(void *dynArray);
-    size_t aCUtilsDynArraySize(void *dynArray);
-    bool aCUtilsDynArrayReserve(void *dynArray, size_t reserveSize, size_t typeSize);
-    bool aCUtilsDynArrayShrinkToFit(void *dynArray, size_t typeSize);
-    bool aCUtilsDynArrayClear(void *dynArray, size_t typeSize);
-    bool aCUtilsDynArrayShiftElements(void *dynArray, size_t index, size_t count, size_t typeSize);
-    bool aCUtilsDynArrayPrepareInsertion(void* dynArray, size_t *index, size_t valueCount, size_t typeSize);
-    bool aCUtilsDynArrayInsertArray(void *dynArray, size_t index, const void *array, size_t arraySize, size_t typeSize);
-    void aCUtilsDynArrayRemove(void *dynArray, size_t index, size_t count, size_t typeSize);
+    size_t private_ACUtils_DynArray_calculateCapacityGeneric(size_t requiredSize, size_t minCapacity, size_t maxCapacity, size_t multiplier);
+    void* private_ACUtils_DynArray_construct(size_t typeSize);
+    void private_ACUtils_DynArray_destruct(void *dynArray);
+    size_t private_ACUtils_DynArray_size(void *dynArray);
+    bool private_ACUtils_DynArray_reserve(void *dynArray, size_t reserveSize, size_t typeSize);
+    bool private_ACUtils_DynArray_shrinkToFit(void *dynArray, size_t typeSize);
+    bool private_ACUtils_DynArray_clear(void *dynArray, size_t typeSize);
+    bool private_ACUtils_DynArray_prepareInsertion(void* dynArray, size_t *index, size_t valueCount, size_t typeSize);
+    bool private_ACUtils_DynArray_insertArray(void *dynArray, size_t index, const void *array, size_t arraySize, size_t typeSize);
+    void private_ACUtils_DynArray_remove(void *dynArray, size_t index, size_t count, size_t typeSize);
 #endif
 
 #endif /* ACUTILS_DYNARRAY_H */
