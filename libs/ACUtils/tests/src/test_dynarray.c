@@ -13,11 +13,11 @@ extern size_t private_ACUtils_DynArray_testFreeCount;
 
 static const size_t aDynArrayTestCapacityMin = 8;
 static const size_t aDynArrayTestCapacityMax = 32;
-static const size_t aDynArrayTestCapacityMul = 2;
+static const double aDynArrayTestCapacityMul = 2;
 
 static size_t calculateCapacityTest(size_t requiredSize) {
-    return private_ACUtils_DynArray_calculateCapacityGeneric(requiredSize, aDynArrayTestCapacityMin, aDynArrayTestCapacityMax,
-                                                    aDynArrayTestCapacityMul);
+    return _private_ACUtils_DynArray_calculateCapacityGeneric(
+            requiredSize, aDynArrayTestCapacityMin, aDynArrayTestCapacityMax, aDynArrayTestCapacityMul);
 }
 
 A_DYNAMIC_ARRAY_DEFINITION(DynStringTestArray, char);
@@ -298,7 +298,7 @@ START_TEST(test_aDynArrayClear_success_shrinked)
     struct DynStringTestArray array;
     array.size = aDynArrayTestCapacityMin + 1;
     array.calculateCapacity = calculateCapacityTest;
-    array.capacity = aDynArrayTestCapacityMin * aDynArrayTestCapacityMul;
+    array.capacity = (size_t) (aDynArrayTestCapacityMin * aDynArrayTestCapacityMul);
     private_ACUtils_DynArray_testMallocFail = false;
     array.buffer = malloc(array.capacity);
     private_ACUtils_DynArray_testReallocFail = false;
@@ -317,13 +317,13 @@ START_TEST(test_aDynArrayClear_failure_notShrinked)
     struct DynStringTestArray array;
     array.size = aDynArrayTestCapacityMin + 1;
     array.calculateCapacity = calculateCapacityTest;
-    array.capacity = aDynArrayTestCapacityMin * aDynArrayTestCapacityMul;
+    array.capacity = (size_t) (aDynArrayTestCapacityMin * aDynArrayTestCapacityMul);
     private_ACUtils_DynArray_testMallocFail = false;
     array.buffer = malloc(array.capacity);
     private_ACUtils_DynArray_testReallocFail = true;
     ck_assert_uint_eq(aDynArrayClear(&array), false);
     ck_assert_uint_eq(array.size, 0);
-    ck_assert_uint_eq(array.capacity, aDynArrayTestCapacityMin * aDynArrayTestCapacityMul);
+    ck_assert_uint_eq(array.capacity, (size_t) (aDynArrayTestCapacityMin * aDynArrayTestCapacityMul));
     ck_assert_ptr_nonnull(array.buffer);
     free(array.buffer);
 }
