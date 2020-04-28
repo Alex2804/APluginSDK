@@ -6,7 +6,7 @@
 #define ACUTILS_SYMBOL_ATTRIBUTES APLUGINSDK_NO_EXPORT
 #include "../../libs/ACUtils/src/dynarray.c"
 
-#ifdef __cplusplus
+#if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
     #define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APLUGINSDK_NO_EXPORT
 #else
     #define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT
@@ -29,7 +29,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         struct APluginSDKFeatureInfoDynArray *featureInfos;
         struct APluginSDKClassInfoDynArray *classInfos;
 
-#ifdef __cplusplus
+#if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
         ~_private_APluginSDK_InfoManager() {
             _private_APluginSDK_destructInfoManager();
         }
@@ -54,7 +54,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         for(i = 0; i < aDynArraySize(_private_APluginSDK_infoManager->classInfos); ++i)
             free(aDynArrayGet(_private_APluginSDK_infoManager->classInfos, i));
         aDynArrayDestruct(_private_APluginSDK_infoManager->classInfos);
-#ifndef __cplusplus
+#if !PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
         free(_private_APluginSDK_infoManager);
 #endif
         _private_APluginSDK_infoManager = NULL;
@@ -62,7 +62,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     static struct _private_APluginSDK_InfoManager* _private_APluginSDK_constructInfoManager()
     {
         if(_private_APluginSDK_infoManager == NULL) {
-#ifdef __cplusplus
+#if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
             static struct _private_APluginSDK_InfoManager infoManager;
             _private_APluginSDK_infoManager = &infoManager;
 #else

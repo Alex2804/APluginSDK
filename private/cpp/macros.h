@@ -46,13 +46,13 @@
 
 /* private plugin name macro */
 #define PRIVATE_APLUGINSDK_SET_NAME(pluginName)                                                                        \
-    bool _private_APluginSDK_implementation_name_pluginNameSet =                                  \
-        PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_setPluginName(#pluginName);
+    static bool _private_APluginSDK_implementation_name_pluginNameSet =                                                       \
+        PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_setPluginName(#pluginName)
 
 /* private plugin version macro */
 #define PRIVATE_APLUGINSDK_SET_VERSION(major, minor, patch)                                                            \
-    bool _private_APluginSDK_implementation_version_pluginVersionSet =                            \
-        PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_setPluginVersion(major, minor, patch);
+    static bool _private_APluginSDK_implementation_version_pluginVersionSet =                                                 \
+        PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_setPluginVersion(major, minor, patch)
 
 /* private plugin feature macro */
 #define PRIVATE_APLUGINSDK_REGISTER_FEATURE(returnType, featureGroup, featureName, ...)                                \
@@ -71,8 +71,8 @@
 /* private plugin class macros */
 #define PRIVATE_APLUGINSDK_REGISTER_CLASS(interfaceName, className)                                                    \
     PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                          \
-        namespace implementation { namespace features {                                                                \
-            namespace interface_name_##interfaceName { namespace class_name_##className {                              \
+        namespace implementation { namespace classes {                                                                 \
+            namespace interface_##interfaceName { namespace class_##className {                                        \
                 APLUGINSDK_NO_EXPORT className* createInstance()                                                       \
                 {                                                                                                      \
                     return new className();                                                                            \
@@ -81,10 +81,14 @@
                 {                                                                                                      \
                     delete ptr;                                                                                        \
                 }                                                                                                      \
-                APLUGINSDK_NO_EXPORT bool pluginClassRegistered = _private_APluginSDK_registerClass(#interfaceName,    \
-                    #className, reinterpret_cast<void*>(createInstance), reinterpret_cast<void*>(deleteInstance));     \
             }}                                                                                                         \
         }}                                                                                                             \
-    PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE
+    PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                         \
+    APLUGINSDK_NO_EXPORT bool _private_APluginSDK_implementation_classes_##interfaceName##_##className =               \
+        PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_registerClass(#interfaceName, #className,             \
+            reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::classes::                     \
+                interface_##interfaceName::class_##className::createInstance),                                         \
+            reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::classes::                     \
+                interface_##interfaceName::class_##className::deleteInstance))
 
 #endif /* APLUGINSDK_CPP_MACROS_H */
