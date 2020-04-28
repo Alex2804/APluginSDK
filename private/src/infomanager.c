@@ -110,9 +110,19 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     bool _private_APluginSDK_setPluginName(const char *name)
     {
         struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_constructInfoManager();
+        size_t nameLength = strlen(name);
         if(infoManager == NULL)
             return false;
-        infoManager->pluginInfo->pluginName = name;
+        free(infoManager->pluginInfo->pluginName);
+        if(nameLength >= 2 && name[0] == '"' && name[nameLength - 1] == '"') {
+            infoManager->pluginInfo->pluginName = (char*) malloc(sizeof(char) * (nameLength - 1));
+            memcpy(infoManager->pluginInfo->pluginName, name + 1, sizeof(char) * (nameLength - 2));
+            infoManager->pluginInfo->pluginName[nameLength - 2] = '\0';
+        } else {
+            infoManager->pluginInfo->pluginName = (char*) malloc(sizeof(char) * nameLength + 1);
+            memcpy(infoManager->pluginInfo->pluginName, name, sizeof(char) * nameLength);
+            infoManager->pluginInfo->pluginName[nameLength] = '\0';
+        }
         return true;
     }
     bool _private_APluginSDK_setPluginVersion(size_t major, size_t minor, size_t patch)
@@ -233,12 +243,14 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         info->getClassCount = _private_APluginSDK_getClassCount;
         info->getClassInfo = _private_APluginSDK_getClassInfo;
         info->getClassInfos = _private_APluginSDK_getClassInfos;
-        info->pluginName = "";
+        info->pluginName = (char*) malloc(sizeof(char));
+        info->pluginName[0] = '\0';
         info->pluginVersionMajor = info->pluginVersionMinor = info->pluginVersionPatch = 0;
         return info;
     }
     static void _private_APluginSDK_destructPluginInfo(struct APLUGINLIBRARY_NAMESPACE APluginInfo* info)
     {
+        free(info->pluginName);
         free(info);
     }
 
