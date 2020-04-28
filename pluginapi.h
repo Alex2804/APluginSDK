@@ -35,15 +35,17 @@ PRIVATE_APLUGINSDK_CLOSE_API_NAMESPACE
 #define A_PLUGIN_RECORD_FEATURE(featureGroup, featureName) \
     PRIVATE_APLUGINSDK_RECORD_FEATURE(featureGroup, featureName)
 
-#define A_PLUGIN_REGISTER_CLASS(interfaceName, className) \
-    PRIVATE_APLUGINSDK_REGISTER_CLASS(interfaceName, className)
+#ifdef __cplusplus
+    #define A_PLUGIN_REGISTER_CLASS(interfaceName, className) \
+        PRIVATE_APLUGINSDK_REGISTER_CLASS(interfaceName, className)
+#endif
 
-#if !A_PLUGIN_SDK_EXCLUDE_IMPLEMENTATION
-#   ifdef __cplusplus
-#       include "src/cpp/pluginapi.cpp"
-#   else
-#       include "src/c/pluginapi.c"
-#   endif
+#if !APLUGINSDK_EXCLUDE_IMPLEMENTATION
+    #ifdef __cplusplus
+        #include "src/cpp/pluginapi.cpp"
+    #else
+        #include "src/c/pluginapi.c"
+    #endif
 #endif
 
 #endif /* APLUGINSDK_PLUGINAPI_H */

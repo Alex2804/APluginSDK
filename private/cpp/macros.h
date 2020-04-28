@@ -24,7 +24,7 @@
         PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                      \
             namespace implementation { namespace init {                                                                \
                 APLUGINSDK_NO_EXPORT bool initAPluginFunctionRegistered =                                              \
-                    private_APluginSDK_registerInitAPluginFunction(                                                    \
+                    _private_APluginSDK_registerInitAPluginFunction(                                                   \
                         reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE api::initAPlugin));               \
             }}                                                                                                         \
         PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                     \
@@ -37,7 +37,7 @@
         PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                      \
             namespace implementation { namespace fini {                                                                \
                 APLUGINSDK_NO_EXPORT bool finiAPluginFunctionRegistered =                                              \
-                    private_APluginSDK_registerFiniAPluginFunction(                                                    \
+                    _private_APluginSDK_registerFiniAPluginFunction(                                                   \
                         reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE api::finiAPlugin));               \
             }}                                                                                                         \
         PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                     \
@@ -46,35 +46,27 @@
 
 /* private plugin name macro */
 #define PRIVATE_APLUGINSDK_SET_NAME(pluginName)                                                                        \
-    PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                          \
-        namespace implementation { namespace name {                                                                    \
-            APLUGINSDK_NO_EXPORT bool pluginNameSet = private_APluginSDK_setPluginName(#pluginName);                   \
-        }}                                                                                                             \
-    PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE
+    bool _private_APluginSDK_implementation_name_pluginNameSet =                                  \
+        PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_setPluginName(#pluginName);
 
 /* private plugin version macro */
 #define PRIVATE_APLUGINSDK_SET_VERSION(major, minor, patch)                                                            \
-    PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                          \
-        namespace implementation { namespace name {                                                                    \
-            APLUGINSDK_NO_EXPORT bool pluginVersionSet = private_APluginSDK_setPluginVersion(major, minor, patch);     \
-        }}                                                                                                             \
-    PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE
+    bool _private_APluginSDK_implementation_version_pluginVersionSet =                            \
+        PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_setPluginVersion(major, minor, patch);
 
 /* private plugin feature macro */
 #define PRIVATE_APLUGINSDK_REGISTER_FEATURE(returnType, featureGroup, featureName, ...)                                \
     PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                          \
-        namespace implementation { namespace features {                                                                \
-            namespace feature_group_##featureGroup { namespace feature_name_##featureName {                            \
-                APLUGINSDK_NO_EXPORT returnType featureFunction(__VA_ARGS__);                                          \
-                APLUGINSDK_NO_EXPORT bool pluginFeatureRegistered = private_APluginSDK_registerFeature(#featureGroup,  \
-                    #featureName, #returnType, "" #__VA_ARGS__,  reinterpret_cast<void*>(featureFunction));            \
-            }}                                                                                                         \
-        }}                                                                                                             \
+        namespace implementation { namespace features { namespace featureGroup { namespace featureName {               \
+            APLUGINSDK_NO_EXPORT returnType featureFunction(__VA_ARGS__);                                              \
+            APLUGINSDK_NO_EXPORT bool pluginFeatureRegistered = _private_APluginSDK_registerFeature(#featureGroup,     \
+                #featureName, #returnType, "" #__VA_ARGS__,  reinterpret_cast<void*>(featureFunction));                \
+        }}}}                                                                                                           \
     PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                         \
-    returnType PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::features::feature_group_##featureGroup::           \
-        feature_name_##featureName::featureFunction(__VA_ARGS__)
+    returnType PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::features::featureGroup::featureName::featureFunction(__VA_ARGS__)
 
-#define PRIVATE_APLUGINSDK_RECORD_FEATURE(featureGroup, featureName) ((void)0) /* no-op but force ';' behind macro */
+#define PRIVATE_APLUGINSDK_RECORD_FEATURE(featureGroup, featureName) \
+    { ((void)PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::features::featureGroup::featureName::pluginFeatureRegistered); } ((void)0)
 
 /* private plugin class macros */
 #define PRIVATE_APLUGINSDK_REGISTER_CLASS(interfaceName, className)                                                    \
@@ -89,7 +81,7 @@
                 {                                                                                                      \
                     delete ptr;                                                                                        \
                 }                                                                                                      \
-                APLUGINSDK_NO_EXPORT bool pluginClassRegistered = private_APluginSDK_registerClass(#interfaceName,     \
+                APLUGINSDK_NO_EXPORT bool pluginClassRegistered = _private_APluginSDK_registerClass(#interfaceName,    \
                     #className, reinterpret_cast<void*>(createInstance), reinterpret_cast<void*>(deleteInstance));     \
             }}                                                                                                         \
         }}                                                                                                             \

@@ -2,9 +2,9 @@
 #define APLUGINSDK_TYPES_H
 
 #ifdef __cplusplus
-#   include <cstddef>
+    #include <cstddef>
 #else
-#   include "stddef.h"
+    #include "stddef.h"
 #endif
 
 #include "../libs/ACUtils/include/ACUtils/types.h"
