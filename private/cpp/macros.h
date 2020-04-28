@@ -85,7 +85,7 @@
         }}                                                                                                             \
     PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                         \
     APLUGINSDK_NO_EXPORT bool _private_APluginSDK_implementation_classes_##interfaceName##_##className =               \
-        PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_registerClass(#interfaceName, #className,             \
+        :: PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_registerClass(#interfaceName, #className,             \
             reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::classes::                     \
                 interface_##interfaceName::class_##className::createInstance),                                         \
             reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::classes::                     \

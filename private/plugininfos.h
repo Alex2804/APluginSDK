@@ -51,7 +51,7 @@ PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
         const struct APluginClassInfo*(*getClassInfo)(size_t index);
         const struct APluginClassInfo* const*(*getClassInfos)();
 
-        const char* pluginName;
+        char* pluginName;
         size_t pluginVersionMajor, pluginVersionMinor, pluginVersionPatch;
     };
 PRIVATE_APLUGINLIBRARY_CLOSE_NAMESPACE
