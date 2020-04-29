@@ -4,11 +4,11 @@
 #include "private/infomanager.h"
 
 PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
-    const size_t A_PLUGIN_API_VERSION_MAJOR = 3;
-    const size_t A_PLUGIN_API_VERSION_MINOR = 0;
-    const size_t A_PLUGIN_API_VERSION_PATCH = 0;
-
     PRIVATE_APLUGINSDK_OPEN_EXTERN_C
+        const size_t A_PLUGIN_API_VERSION_MAJOR = 3;
+        const size_t A_PLUGIN_API_VERSION_MINOR = 0;
+        const size_t A_PLUGIN_API_VERSION_PATCH = 0;
+
         APLUGINSDK_API void* allocateMemory(size_t size);
         APLUGINSDK_API void freeMemory(void* ptr);
     PRIVATE_APLUGINSDK_CLOSE_EXTERN_C
