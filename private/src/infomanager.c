@@ -1,7 +1,7 @@
 #include "../infomanager.h"
 
 #if APLUGINSDK_EXCLUDE_IMPLEMENTATION
-    #include "../../pluginapi.h"
+#   include "../../pluginapi.h"
 #endif
 
 #include <ctype.h>
@@ -11,9 +11,9 @@
 #include "../../libs/ACUtils/src/dynarray.c"
 
 #if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
-    #define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APLUGINSDK_NO_EXPORT
+#   define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APLUGINSDK_NO_EXPORT
 #else
-    #define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT
+#   define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT
 #endif
 
 PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
@@ -184,15 +184,6 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     }
 
 
-    APLUGINSDK_NO_EXPORT void* APluginSDK_malloc(size_t size)
-    {
-        return malloc(size);
-    }
-    APLUGINSDK_NO_EXPORT void APluginSDK_free(void* ptr)
-    {
-        free(ptr);
-    }
-
     static size_t _private_APluginSDK_getFeatureCount()
     {
         if(_private_APluginSDK_infoManager == NULL)
@@ -239,8 +230,8 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         info->apiVersionPatch = APLUGINLIBRARY_NAMESPACE A_PLUGIN_API_VERSION_PATCH;
         info->pluginLanguage = PRIVATE_APLUGINSDK_PLUGIN_LANGUAGE;
         info->releasePlugin = _private_APluginSDK_destructInfoManager;
-        info->allocateMemory = APluginSDK_malloc;
-        info->freeMemory = APluginSDK_free;
+        info->allocateMemory = APLUGINLIBRARY_NAMESPACE APluginSDK_malloc;
+        info->freeMemory = APLUGINLIBRARY_NAMESPACE APluginSDK_free;
         info->getFeatureCount = _private_APluginSDK_getFeatureCount;
         info->getFeatureInfo = _private_APluginSDK_getFeatureInfo;
         info->getFeatureInfos = _private_APluginSDK_getFeatureInfos;

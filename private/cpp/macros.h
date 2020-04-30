@@ -20,7 +20,7 @@
 
 /* private plugin initialization function macro */
 #if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
-    #define PRIVATE_APLUGINSDK_INIT_FUNCTION                                                                           \
+#   define PRIVATE_APLUGINSDK_INIT_FUNCTION                                                                           \
         PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                      \
             namespace implementation { namespace init {                                                                \
                 APLUGINSDK_NO_EXPORT bool initAPluginFunctionRegistered =                                              \
@@ -33,7 +33,7 @@
 
 /* private plugin finalization function macro */
 #if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
-    #define PRIVATE_APLUGINSDK_FINI_FUNCTION                                                                           \
+#   define PRIVATE_APLUGINSDK_FINI_FUNCTION                                                                           \
         PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                      \
             namespace implementation { namespace fini {                                                                \
                 APLUGINSDK_NO_EXPORT bool finiAPluginFunctionRegistered =                                              \
