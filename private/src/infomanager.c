@@ -184,11 +184,11 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     }
 
 
-    static void* _private_APluginSDK_allocateMemory(size_t size)
+    APLUGINSDK_NO_EXPORT void* APluginSDK_malloc(size_t size)
     {
         return malloc(size);
     }
-    static void _private_APluginSDK_freeMemory(void* ptr)
+    APLUGINSDK_NO_EXPORT void APluginSDK_free(void* ptr)
     {
         free(ptr);
     }
@@ -239,8 +239,8 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         info->apiVersionPatch = APLUGINLIBRARY_NAMESPACE A_PLUGIN_API_VERSION_PATCH;
         info->pluginLanguage = PRIVATE_APLUGINSDK_PLUGIN_LANGUAGE;
         info->releasePlugin = _private_APluginSDK_destructInfoManager;
-        info->allocateMemory = _private_APluginSDK_allocateMemory;
-        info->freeMemory = _private_APluginSDK_freeMemory;
+        info->allocateMemory = APluginSDK_malloc;
+        info->freeMemory = APluginSDK_free;
         info->getFeatureCount = _private_APluginSDK_getFeatureCount;
         info->getFeatureInfo = _private_APluginSDK_getFeatureInfo;
         info->getFeatureInfos = _private_APluginSDK_getFeatureInfos;

@@ -25,10 +25,10 @@
             namespace implementation { namespace init {                                                                \
                 APLUGINSDK_NO_EXPORT bool initAPluginFunctionRegistered =                                              \
                     _private_APluginSDK_registerInitAPluginFunction(                                                   \
-                        reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE api::initAPlugin));               \
+                        reinterpret_cast<void*>(PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_initPlugin));              \
             }}                                                                                                         \
         PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                     \
-        void PRIVATE_APLUGINSDK_API_NAMESPACE initAPlugin()
+        void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_initPlugin()
 #endif
 
 /* private plugin finalization function macro */
@@ -38,10 +38,10 @@
             namespace implementation { namespace fini {                                                                \
                 APLUGINSDK_NO_EXPORT bool finiAPluginFunctionRegistered =                                              \
                     _private_APluginSDK_registerFiniAPluginFunction(                                                   \
-                        reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE api::finiAPlugin));               \
+                        reinterpret_cast<void*>(PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_finiPlugin));              \
             }}                                                                                                         \
         PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                     \
-        void PRIVATE_APLUGINSDK_API_NAMESPACE finiAPlugin()
+        void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_finiPlugin()
 #endif
 
 /* private plugin name macro */
