@@ -103,7 +103,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     }
 #endif
 
-    struct APLUGINLIBRARY_NAMESPACE APluginInfo* _private_APluginSDK_getPluginInfo()
+    const struct APLUGINLIBRARY_NAMESPACE APluginInfo* _private_APluginSDK_getPluginInfo()
     {
         struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_constructInfoManager();
         if(infoManager == NULL)
