@@ -5,12 +5,13 @@
 #endif
 
 #include <ctype.h>
+#include <stdlib.h>
 
 #undef ACUTILS_SYMBOL_ATTRIBUTES
 #define ACUTILS_SYMBOL_ATTRIBUTES APLUGINSDK_NO_EXPORT
 #include "../../libs/ACUtils/src/dynarray.c"
 
-#if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
+#ifdef __cplusplus
 #   define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APLUGINSDK_NO_EXPORT
 #else
 #   define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT
@@ -22,7 +23,9 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     A_DYNAMIC_ARRAY_DEFINITION(PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APluginSDKClassInfoDynArray, struct APLUGINLIBRARY_NAMESPACE APluginClassInfo*);
     A_DYNAMIC_ARRAY_DEFINITION(PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APluginSDKCString, char);
 
-    static void _private_APluginSDK_destructInfoManager();
+    struct _private_APluginSDK_InfoManager;
+    static void _private_APluginSDK_releaseInfoManager(struct _private_APluginSDK_InfoManager*);
+    static struct _private_APluginSDK_InfoManager* _private_APluginSDK_initInfoManager(struct _private_APluginSDK_InfoManager*);
     static struct APLUGINLIBRARY_NAMESPACE APluginInfo* _private_APluginSDK_constructPluginInfo();
     static void _private_APluginSDK_destructPluginInfo(struct APLUGINLIBRARY_NAMESPACE APluginInfo*);
 
@@ -33,58 +36,76 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         struct APluginSDKFeatureInfoDynArray *featureInfos;
         struct APluginSDKClassInfoDynArray *classInfos;
 
-#if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
+#ifdef __cplusplus
+        _private_APluginSDK_InfoManager() {
+            _private_APluginSDK_initInfoManager(this);
+        }
         ~_private_APluginSDK_InfoManager() {
-            _private_APluginSDK_destructInfoManager();
+            _private_APluginSDK_releaseInfoManager(this);
         }
 #endif
     };
 
-    static struct _private_APluginSDK_InfoManager *_private_APluginSDK_infoManager = NULL;
-
-    static void _private_APluginSDK_destructInfoManager()
+    static void _private_APluginSDK_releaseInfoManager(struct _private_APluginSDK_InfoManager *infoManager)
     {
         size_t i;
-        if(_private_APluginSDK_infoManager == NULL)
+        if(infoManager == NULL)
             return;
-        _private_APluginSDK_destructPluginInfo(_private_APluginSDK_infoManager->pluginInfo);
-        for(i = 0; i < aDynArraySize(_private_APluginSDK_infoManager->featureInfos); ++i) {
-            struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* featureInfo = aDynArrayGet(_private_APluginSDK_infoManager->featureInfos, i);
+        _private_APluginSDK_destructPluginInfo(infoManager->pluginInfo);
+        for(i = 0; i < aDynArraySize(infoManager->featureInfos); ++i) {
+            struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* featureInfo = aDynArrayGet(infoManager->featureInfos, i);
             free(featureInfo->parameterTypes);
             free(featureInfo->parameterNames);
             free(featureInfo);
         }
-        aDynArrayDestruct(_private_APluginSDK_infoManager->featureInfos);
-        for(i = 0; i < aDynArraySize(_private_APluginSDK_infoManager->classInfos); ++i)
-            free(aDynArrayGet(_private_APluginSDK_infoManager->classInfos, i));
-        aDynArrayDestruct(_private_APluginSDK_infoManager->classInfos);
-#if !PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
-        free(_private_APluginSDK_infoManager);
-#endif
-        _private_APluginSDK_infoManager = NULL;
+        aDynArrayDestruct(infoManager->featureInfos);
+        for(i = 0; i < aDynArraySize(infoManager->classInfos); ++i)
+            free(aDynArrayGet(infoManager->classInfos, i));
+        aDynArrayDestruct(infoManager->classInfos);
+    }
+    static void _private_APluginSDK_destructInfoManager(struct _private_APluginSDK_InfoManager *infoManager)
+    {
+        _private_APluginSDK_releaseInfoManager(infoManager);
+        free(infoManager);
+    }
+    static struct _private_APluginSDK_InfoManager* _private_APluginSDK_initInfoManager(
+            struct _private_APluginSDK_InfoManager *infoManager)
+    {
+        if(infoManager == NULL)
+            infoManager = (struct _private_APluginSDK_InfoManager*) malloc(sizeof(struct _private_APluginSDK_InfoManager));
+        if(infoManager != NULL) {
+            infoManager->pluginInfo = _private_APluginSDK_constructPluginInfo();
+            infoManager->featureInfos = aDynArrayConstruct(struct APluginSDKFeatureInfoDynArray);
+            infoManager->classInfos = aDynArrayConstruct(struct APluginSDKClassInfoDynArray);
+            if(infoManager->pluginInfo == NULL
+               || infoManager->featureInfos == NULL
+               || infoManager->classInfos == NULL)
+            {
+                _private_APluginSDK_destructInfoManager(infoManager);
+                return NULL;
+            }
+        }
+        return infoManager;
     }
     static struct _private_APluginSDK_InfoManager* _private_APluginSDK_constructInfoManager()
     {
-        if(_private_APluginSDK_infoManager == NULL) {
-#if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
-            static struct _private_APluginSDK_InfoManager infoManager;
-            _private_APluginSDK_infoManager = &infoManager;
-#else
-            _private_APluginSDK_infoManager = (struct _private_APluginSDK_InfoManager*) malloc(sizeof(struct _private_APluginSDK_InfoManager));
+        return _private_APluginSDK_initInfoManager(NULL);
+    }
+
+#ifndef __cplusplus
+    static struct _private_APluginSDK_InfoManager *_private_APluginSDK_infoManager = NULL;
 #endif
-            if(_private_APluginSDK_infoManager != NULL) {
-                _private_APluginSDK_infoManager->pluginInfo = _private_APluginSDK_constructPluginInfo();
-                _private_APluginSDK_infoManager->featureInfos = aDynArrayConstruct(struct APluginSDKFeatureInfoDynArray);
-                _private_APluginSDK_infoManager->classInfos = aDynArrayConstruct(struct APluginSDKClassInfoDynArray);
-                if(_private_APluginSDK_infoManager->pluginInfo == NULL
-                   || _private_APluginSDK_infoManager->featureInfos == NULL
-                   || _private_APluginSDK_infoManager->classInfos == NULL)
-                {
-                    _private_APluginSDK_destructInfoManager();
-                }
-            }
-        }
+
+    static struct _private_APluginSDK_InfoManager* _private_APluginSDK_getInfoManagerInstance()
+    {
+#ifdef __cplusplus
+        static struct _private_APluginSDK_InfoManager infoManager;
+        return &infoManager;
+#else
+        if(_private_APluginSDK_infoManager == NULL)
+            _private_APluginSDK_infoManager = _private_APluginSDK_constructInfoManager();
         return _private_APluginSDK_infoManager;
+#endif
     }
 
 #if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
@@ -105,7 +126,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
 
     const struct APLUGINLIBRARY_NAMESPACE APluginInfo* _private_APluginSDK_getPluginInfo()
     {
-        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_constructInfoManager();
+        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
         if(infoManager == NULL)
             return NULL;
         return infoManager->pluginInfo;
@@ -113,7 +134,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
 
     bool _private_APluginSDK_setPluginName(const char *name)
     {
-        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_constructInfoManager();
+        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
         size_t nameLength = strlen(name);
         if(infoManager == NULL)
             return false;
@@ -131,7 +152,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     }
     bool _private_APluginSDK_setPluginVersion(size_t major, size_t minor, size_t patch)
     {
-        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_constructInfoManager();
+        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
         if(infoManager == NULL)
             return false;
         infoManager->pluginInfo->pluginVersionMajor = major;
@@ -145,7 +166,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     {
         struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* info;
         char **splittedParameterList;
-        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_constructInfoManager();
+        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
         if(infoManager == NULL)
             return false;
         info = (struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo*) malloc(sizeof(struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo));
@@ -168,7 +189,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
                                            void* createInstance, void* deleteInstance)
     {
         struct APLUGINLIBRARY_NAMESPACE APluginClassInfo* info;
-        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_constructInfoManager();
+        struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
         if(infoManager == NULL)
             return false;
         info = (struct APLUGINLIBRARY_NAMESPACE APluginClassInfo*) malloc(sizeof(struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo));
@@ -184,42 +205,56 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     }
 
 
+    static void _private_APluginSDK_releasePlugin()
+    {
+#ifndef __cplusplus
+        _private_APluginSDK_destructInfoManager(_private_APluginSDK_infoManager);
+        _private_APluginSDK_infoManager = NULL;
+#endif
+    }
+
     static size_t _private_APluginSDK_getFeatureCount()
     {
-        if(_private_APluginSDK_infoManager == NULL)
+        if(_private_APluginSDK_getInfoManagerInstance() == NULL)
             return 0;
-        return aDynArraySize(_private_APluginSDK_infoManager->featureInfos);
+        return aDynArraySize(_private_APluginSDK_getInfoManagerInstance()->featureInfos);
     }
     static const struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* _private_APluginSDK_getFeatureInfo(size_t index)
     {
-        if(_private_APluginSDK_infoManager == NULL || index >= aDynArraySize(_private_APluginSDK_infoManager->featureInfos))
+        if(_private_APluginSDK_getInfoManagerInstance() == NULL
+           || index >= aDynArraySize(_private_APluginSDK_getInfoManagerInstance()->featureInfos))
+        {
             return NULL;
-        return aDynArrayGet(_private_APluginSDK_infoManager->featureInfos, index);
+        }
+        return aDynArrayGet(_private_APluginSDK_getInfoManagerInstance()->featureInfos, index);
     }
     static const struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* const* _private_APluginSDK_getFeatureInfos()
     {
-        if(_private_APluginSDK_infoManager == NULL)
+        if(_private_APluginSDK_getInfoManagerInstance() == NULL)
             return NULL;
-        return (const struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* const*) _private_APluginSDK_infoManager->featureInfos->buffer;
+        return (const struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* const*) _private_APluginSDK_getInfoManagerInstance()->featureInfos->buffer;
     }
 
     static size_t _private_APluginSDK_getClassCount()
     {
-        if(_private_APluginSDK_infoManager == NULL)
+        if(_private_APluginSDK_getInfoManagerInstance() == NULL)
             return 0;
-        return aDynArraySize(_private_APluginSDK_infoManager->classInfos);
+        return aDynArraySize(_private_APluginSDK_getInfoManagerInstance()->classInfos);
     }
     static const struct APLUGINLIBRARY_NAMESPACE APluginClassInfo* _private_APluginSDK_getClassInfo(size_t index)
     {
-        if(_private_APluginSDK_infoManager == NULL || index >= aDynArraySize(_private_APluginSDK_infoManager->classInfos))
+        if(_private_APluginSDK_getInfoManagerInstance() == NULL
+           || index >= aDynArraySize(_private_APluginSDK_getInfoManagerInstance()->classInfos))
+        {
             return NULL;
-        return aDynArrayGet(_private_APluginSDK_infoManager->classInfos, index);
+        }
+        return aDynArrayGet(_private_APluginSDK_getInfoManagerInstance()->classInfos, index);
     }
     static const struct APLUGINLIBRARY_NAMESPACE APluginClassInfo* const* _private_APluginSDK_getClassInfos()
     {
-        if(_private_APluginSDK_infoManager == NULL)
+        if(_private_APluginSDK_getInfoManagerInstance() == NULL)
             return NULL;
-        return (const struct APLUGINLIBRARY_NAMESPACE APluginClassInfo* const*) _private_APluginSDK_infoManager->classInfos->buffer;
+        return (const struct APLUGINLIBRARY_NAMESPACE APluginClassInfo* const*) _private_APluginSDK_getInfoManagerInstance()->classInfos->buffer;
     }
 
     static struct APLUGINLIBRARY_NAMESPACE APluginInfo* _private_APluginSDK_constructPluginInfo()
@@ -229,7 +264,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         info->apiVersionMinor = APLUGINLIBRARY_NAMESPACE A_PLUGIN_API_VERSION_MINOR;
         info->apiVersionPatch = APLUGINLIBRARY_NAMESPACE A_PLUGIN_API_VERSION_PATCH;
         info->pluginLanguage = PRIVATE_APLUGINSDK_PLUGIN_LANGUAGE;
-        info->releasePlugin = _private_APluginSDK_destructInfoManager;
+        info->releasePlugin = _private_APluginSDK_releasePlugin;
         info->allocateMemory = APLUGINLIBRARY_NAMESPACE APluginSDK_malloc;
         info->freeMemory = APLUGINLIBRARY_NAMESPACE APluginSDK_free;
         info->getFeatureCount = _private_APluginSDK_getFeatureCount;
