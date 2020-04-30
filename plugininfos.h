@@ -1,8 +1,8 @@
 #ifndef APLUGINSDK_PLUGININFOS_H
 #define APLUGINSDK_PLUGININFOS_H
 
-#include "macros.h"
-#include "types.h"
+#include "private/macros.h"
+#include "private/types.h"
 
 PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
     PRIVATE_APLUGINSDK_OPEN_EXTERN_C

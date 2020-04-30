@@ -1,7 +1,7 @@
 #ifndef APLUGINSDK_INFOMANAGER_H
 #define APLUGINSDK_INFOMANAGER_H
 
-#include "plugininfos.h"
+#include "../plugininfos.h"
 
 PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
 

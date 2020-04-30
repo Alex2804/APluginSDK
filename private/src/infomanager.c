@@ -1,5 +1,9 @@
 #include "../infomanager.h"
 
+#if APLUGINSDK_EXCLUDE_IMPLEMENTATION
+    #include "../../pluginapi.h"
+#endif
+
 #include <ctype.h>
 
 #undef ACUTILS_SYMBOL_ATTRIBUTES
