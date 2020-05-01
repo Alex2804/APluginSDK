@@ -2,6 +2,10 @@
 #   include "../include/ACUtils/dynarray.h"
 #endif
 
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
 #ifdef PRIVATE_ACUTILS_DYN_ARRAY_IMPLEMENT
 
 #if PRIVATE_ACUTILS_TEST
@@ -79,6 +83,7 @@ ACUTILS_SYMBOL_ATTRIBUTES PRIVATE_ACUTILS_ST_FUNC void* _private_ACUtils_DynArra
         prototype->buffer = (char*) malloc(prototype->capacity * typeSize);
         if(prototype->buffer == NULL) {
             free(prototype);
+            return NULL;
         }
     }
     return prototype;

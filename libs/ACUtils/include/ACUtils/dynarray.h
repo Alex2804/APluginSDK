@@ -1,9 +1,7 @@
 #ifndef ACUTILS_DYNARRAY_H
 #define ACUTILS_DYNARRAY_H
 
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <stddef.h>
 
 #include "macros.h"
 #include "types.h"
@@ -213,7 +211,17 @@
  * @return The element in dynArray at index.
  */
 #define aDynArrayGet(dynArray, index) \
-    (dynArray)->buffer[index]
+    ((dynArray)->buffer[index])
+
+/**
+ * Retrieves the buffer of the dynArray.
+ *
+ * @param dynArray The dynamic array to get the buffer from.
+ *
+ * @return The buffer of dynArray.
+ */
+#define aDynArrayBuffer(dynArray) \
+    ((dynArray)->buffer)
 
 
 #define PRIVATE_ACUTILS_DYN_ARRAY_IMPLEMENT
