@@ -11,12 +11,12 @@
 
 /* private plugin initialization function macro */
 #ifndef PRIVATE_APLUGINSDK_INIT_FUNCTION
-#   define PRIVATE_APLUGINSDK_INIT_FUNCTION void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_initPlugin()
+#   define PRIVATE_APLUGINSDK_INIT_FUNCTION void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_initPlugin(void)
 #endif
 
 /* private plugin finalization function macro*/
 #ifndef PRIVATE_APLUGINSDK_FINI_FUNCTION
-#   define PRIVATE_APLUGINSDK_FINI_FUNCTION void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_finiPlugin()
+#   define PRIVATE_APLUGINSDK_FINI_FUNCTION void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_finiPlugin(void)
 #endif
 
 #endif /* APLUGINSDK_MACROS_H */

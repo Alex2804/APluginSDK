@@ -8,7 +8,7 @@
 #define PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE namespace apl {
 #define PRIVATE_APLUGINLIBRARY_CLOSE_NAMESPACE }
 
-#define PRIVATE_APLUGINSDK_PLUGIN_LANGUAGE APLUGINLIBRARY_NAMESPACE APluginLanguage::CPP
+#define PRIVATE_APLUGINSDK_PLUGIN_LANGUAGE APLUGINLIBRARY_NAMESPACE CPP
 
 #define PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE APLUGINLIBRARY_NAMESPACE sdk::detail::
 #define PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE namespace sdk { namespace detail {
@@ -18,9 +18,10 @@
 #define PRIVATE_APLUGINSDK_OPEN_API_NAMESPACE PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE namespace api {
 #define PRIVATE_APLUGINSDK_CLOSE_API_NAMESPACE } PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE
 
+
 /* private plugin initialization function macro */
 #if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
-#   define PRIVATE_APLUGINSDK_INIT_FUNCTION                                                                           \
+#   define PRIVATE_APLUGINSDK_INIT_FUNCTION                                                                            \
         PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                      \
             namespace implementation { namespace init {                                                                \
                 APLUGINSDK_NO_EXPORT bool initAPluginFunctionRegistered =                                              \
@@ -28,12 +29,12 @@
                         reinterpret_cast<void*>(PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_initPlugin));              \
             }}                                                                                                         \
         PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                     \
-        void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_initPlugin()
+        void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_initPlugin(void)
 #endif
 
 /* private plugin finalization function macro */
 #if PRIVATE_APLUGINSDK_INTEGRATED_PLUGIN
-#   define PRIVATE_APLUGINSDK_FINI_FUNCTION                                                                           \
+#   define PRIVATE_APLUGINSDK_FINI_FUNCTION                                                                            \
         PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE                                                                      \
             namespace implementation { namespace fini {                                                                \
                 APLUGINSDK_NO_EXPORT bool finiAPluginFunctionRegistered =                                              \
@@ -41,17 +42,17 @@
                         reinterpret_cast<void*>(PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_finiPlugin));              \
             }}                                                                                                         \
         PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                     \
-        void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_finiPlugin()
+        void PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_finiPlugin(void)
 #endif
 
 /* private plugin name macro */
 #define PRIVATE_APLUGINSDK_SET_NAME(pluginName)                                                                        \
-    static bool _private_APluginSDK_implementation_name_pluginNameSet =                                                       \
+    static bool _private_APluginSDK_implementation_name_pluginNameSet =                                                \
         PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_setPluginName(#pluginName)
 
 /* private plugin version macro */
 #define PRIVATE_APLUGINSDK_SET_VERSION(major, minor, patch)                                                            \
-    static bool _private_APluginSDK_implementation_version_pluginVersionSet =                                                 \
+    static bool _private_APluginSDK_implementation_version_pluginVersionSet =                                          \
         PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_setPluginVersion(major, minor, patch)
 
 /* private plugin feature macro */
@@ -85,7 +86,7 @@
         }}                                                                                                             \
     PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE                                                                         \
     APLUGINSDK_NO_EXPORT bool _private_APluginSDK_implementation_classes_##interfaceName##_##className =               \
-        :: PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_registerClass(#interfaceName, #className,             \
+        :: PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_registerClass(#interfaceName, #className,          \
             reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::classes::                     \
                 interface_##interfaceName::class_##className::createInstance),                                         \
             reinterpret_cast<void*>(PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE implementation::classes::                     \

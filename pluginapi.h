@@ -3,12 +3,12 @@
 
 #include "private/infomanager.h"
 
+#define APLUGINSDK_API_VERSION_MAJOR 4
+#define APLUGINSDK_API_VERSION_MINOR 0
+#define APLUGINSDK_API_VERSION_PATCH 0
+
 PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
     PRIVATE_APLUGINSDK_OPEN_EXTERN_C
-        const size_t A_PLUGIN_API_VERSION_MAJOR = 4;
-        const size_t A_PLUGIN_API_VERSION_MINOR = 0;
-        const size_t A_PLUGIN_API_VERSION_PATCH = 0;
-
         APLUGINSDK_NO_EXPORT void* APluginSDK_malloc(size_t size);
         APLUGINSDK_NO_EXPORT void APluginSDK_free(void* ptr);
     PRIVATE_APLUGINSDK_CLOSE_EXTERN_C
@@ -16,9 +16,9 @@ PRIVATE_APLUGINLIBRARY_CLOSE_NAMESPACE
 
 PRIVATE_APLUGINSDK_OPEN_API_NAMESPACE
     PRIVATE_APLUGINSDK_OPEN_EXTERN_C
-    APLUGINSDK_API void APluginSDK_initPlugin(); /* existence must be checked */
-    APLUGINSDK_API void APluginSDK_finiPlugin(); /* existence must be checked */
-    APLUGINSDK_API const struct APluginInfo* APluginSDK_getPluginInfo();
+    APLUGINSDK_API void APluginSDK_initPlugin(void); /* existence must be checked */
+    APLUGINSDK_API void APluginSDK_finiPlugin(void); /* existence must be checked */
+    APLUGINSDK_API const struct APluginInfo* APluginSDK_getPluginInfo(void);
     PRIVATE_APLUGINSDK_CLOSE_EXTERN_C
 PRIVATE_APLUGINSDK_CLOSE_API_NAMESPACE
 

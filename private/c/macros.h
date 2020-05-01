@@ -18,13 +18,12 @@
 #define PRIVATE_APLUGINSDK_OPEN_API_NAMESPACE
 #define PRIVATE_APLUGINSDK_CLOSE_API_NAMESPACE
 
+
 /* private plugin name macro */
-#define PRIVATE_APLUGINSDK_SET_NAME(pluginName) \
-    _private_APluginSDK_setPluginName(#pluginName)
+#define PRIVATE_APLUGINSDK_SET_NAME(pluginName) _private_APluginSDK_setPluginName(#pluginName)
 
 /* private plugin version macro */
-#define PRIVATE_APLUGINSDK_SET_VERSION(major, minor, patch) \
-    _private_APluginSDK_setPluginVersion(major, minor, patch)
+#define PRIVATE_APLUGINSDK_SET_VERSION(major, minor, patch) _private_APluginSDK_setPluginVersion(major, minor, patch)
 
 /* private plugin feature macro */
 #define PRIVATE_APLUGINSDK_REGISTER_FEATURE(returnType, featureGroup, featureName, ...)                                                           \

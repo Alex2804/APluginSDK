@@ -4,6 +4,10 @@
 #include "private/macros.h"
 #include "private/types.h"
 
+PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
+    struct APrivatePluginInfo;
+PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE
+
 PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
     PRIVATE_APLUGINSDK_OPEN_EXTERN_C
         struct APluginInfo;
@@ -36,13 +40,16 @@ PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
 
         struct APluginInfo
         {
-            size_t apiVersionMajor, apiVersionMinor, apiVersionPatch;
-            enum APluginLanguage pluginLanguage;
+            struct PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE APrivatePluginInfo* privateInfo;
 
-            void(*releasePlugin)();
+            size_t apiVersionMajor, apiVersionMinor, apiVersionPatch;
 
             void*(*allocateMemory)(size_t size);
             void(*freeMemory)(void*);
+
+            enum APluginLanguage pluginLanguage;
+            char* pluginName;
+            size_t pluginVersionMajor, pluginVersionMinor, pluginVersionPatch;
 
             size_t(*getFeatureCount)();
             const struct APluginFeatureInfo*(*getFeatureInfo)(size_t index);
@@ -51,9 +58,6 @@ PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
             size_t(*getClassCount)();
             const struct APluginClassInfo*(*getClassInfo)(size_t index);
             const struct APluginClassInfo* const*(*getClassInfos)();
-
-            char* pluginName;
-            size_t pluginVersionMajor, pluginVersionMinor, pluginVersionPatch;
         };
     PRIVATE_APLUGINSDK_CLOSE_EXTERN_C
 PRIVATE_APLUGINLIBRARY_CLOSE_NAMESPACE

@@ -23,9 +23,10 @@ compiling src/c/pluginapi.c or src/cpp/pluginapi.cpp (depending on the language)
 The C API is C90 compliant.
 
 #### <a name="C-API-init-fini">Init and Fini function</a>
-A plugin can have an initialization and a finalization method, which are called after loading and before unloading
-respectively. The macros can only be used once per plugin and must be used in the global scope. The initialization
-method must exist in the plugin. The finalization method is optional.
+A plugin can have an initialization and a finalization method, which are called after which are called after loading/
+before unloading of the shared library (not every time the plugin is loaded). The macros can only be used once per
+plugin and must be used in the global scope. The initialization method must exist in the plugin, the finalization method
+is optional.
 
 The initialization method can be registered with the following macro:
 
@@ -107,21 +108,21 @@ for example:
 ---
 
 ## <a name="CPP-API">C++ API</a>
-The C API is compatible with C++ but not vice versa. This means that plugins that use the C API can also be
-easily compiled with C++. The C++ API has a few requirements less and some extensions.
+The [C API](#C-API) is compatible with C++ but not vice versa. This means that plugins that use the C API can also be easily
+compiled with C++. The C++ API has a few requirements less and some extensions. The C++ API is C++98 compliant.
 
 #### <a name="CPP-API-init-fini">Init and Fini function</a>
-The initialization and finalization functions are the same as the C API, but both the initialization function and the
-finalization function are optional. They macros must be used in global namespace!
+The initialization and finalization functions are the same as the [C API](#C-API-init-fini), but both the initialization
+function and the finalization function are optional. The macros must be used in global namespace!
 
 #### <a name="CPP-API-name-version">Name And Version</a>
-The name and version macros are the same as the C API and can additionally be declared outside of functions in any
-namespace. The ordering of multiple definitions is undefined.
+The name and version macros are the same as the [C API](#C-API-name-version) and can additionally be used outside of
+functions in any namespace. The name/version selected from multiple definitions is undefined.
 
 #### <a name="CPP-API-feature">Feature</a>
-Features are registered in the same way as in the C API, but you don't have to enter them manually in the internal 
-feature manager, as this is already done during registration (```A_PLUGIN_RECORD_FEATURE``` does nothing).  
-Features must not be in namespaces.
+Features are registered in the same way as in the [C API](#C-API-feature), but you don't have to enter them manually
+in the internal feature manager, as this is already done during registration (```A_PLUGIN_RECORD_FEATURE``` does
+nothing). Features must not be in namespaces.
 
 The following is sufficient to register the feature and add it to the internal feature manager:
 
