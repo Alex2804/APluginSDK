@@ -312,6 +312,22 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
 
 /* ===================================== _private_APluginSDK_splitParameterList ===================================== */
 
+    static bool _private_streq(struct APluginSDKCString *dynArray, const char *str)
+    {
+        size_t dynArraySize;
+        bool ret;
+        if(str == NULL || dynArray == NULL)
+            return false;
+        dynArraySize = aDynArraySize(dynArray);
+        if(dynArraySize == 0 || aDynArrayGet(dynArray, dynArraySize - 1) != '\0') {
+            if(!aDynArrayAdd(dynArray, '\0'))
+                return false;
+        }
+        ret = (strcmp(aDynArrayBuffer(dynArray), str) == 0);
+        aDynArrayRemove(dynArray, dynArraySize, 1);
+        return ret;
+    }
+
     static char** _private_APluginSDK_splitParameterList(const char* parameterList)
     {
         struct APluginSDKCString *tmpParameterList, *typeString, *tmpString, *tmpTypesString, *tmpNamesString;
@@ -331,7 +347,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
             if(typeFront) {
                 if(current != ',' && (isalnum(current) || ispunct(current))) {
                     aDynArrayAdd(typeString, current);
-                } else if(isspace(current) && strcmp(typeString->buffer, "const") == 0) {
+                } else if(isspace(current) && _private_streq(typeString, "const")) {
                     aDynArrayAdd(typeString, ' ');
                 } else if(current == '*' || current == '&') {
                     aDynArrayAdd(typeString, current);
@@ -350,7 +366,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
                     aDynArrayAddDynArray(typeString, tmpString);
                     aDynArrayAdd(typeString, current);
                     aDynArrayClear(tmpString);
-                } else if((isspace(current) || current == ',') && strcmp(tmpString->buffer, "const") == 0) {
+                } else if((isspace(current) || current == ',') && _private_streq(tmpString, "const")) {
                     aDynArrayAddDynArray(typeString, tmpString);
                     aDynArrayClear(tmpString);
                 }
