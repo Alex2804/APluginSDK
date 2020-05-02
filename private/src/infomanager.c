@@ -9,9 +9,10 @@
 
 #include "../privateplugininfos.h"
 
-#undef ACUTILS_SYMBOL_ATTRIBUTES
-#define ACUTILS_SYMBOL_ATTRIBUTES APLUGINSDK_NO_EXPORT
-#include "../../libs/ACUtils/src/dynarray.c"
+#ifndef ACUTILS_ONE_SOURCE
+#   define ACUTILS_ONE_SOURCE
+#endif
+#include "../../libs/ACUtils/include/ACUtils/adynarray.h"
 
 #ifdef __cplusplus
 #   define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APLUGINSDK_NO_EXPORT
@@ -54,16 +55,16 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         if(infoManager == NULL)
             return;
         _private_APluginSDK_destructPluginInfo(infoManager->pluginInfo);
-        for(i = 0; i < aDynArraySize(infoManager->featureInfos); ++i) {
-            struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* featureInfo = aDynArrayGet(infoManager->featureInfos, i);
+        for(i = 0; i < ADynArray_size(infoManager->featureInfos); ++i) {
+            struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* featureInfo = ADynArray_get(infoManager->featureInfos, i);
             free(featureInfo->parameterTypes);
             free(featureInfo->parameterNames);
             free(featureInfo);
         }
-        aDynArrayDestruct(infoManager->featureInfos);
-        for(i = 0; i < aDynArraySize(infoManager->classInfos); ++i)
-            free(aDynArrayGet(infoManager->classInfos, i));
-        aDynArrayDestruct(infoManager->classInfos);
+        ADynArray_destruct(infoManager->featureInfos);
+        for(i = 0; i < ADynArray_size(infoManager->classInfos); ++i)
+            free(ADynArray_get(infoManager->classInfos, i));
+        ADynArray_destruct(infoManager->classInfos);
     }
     static void _private_APluginSDK_destructInfoManager(struct _private_APluginSDK_InfoManager *infoManager)
     {
@@ -77,8 +78,8 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
             infoManager = (struct _private_APluginSDK_InfoManager*) malloc(sizeof(struct _private_APluginSDK_InfoManager));
         if(infoManager != NULL) {
             infoManager->pluginInfo = _private_APluginSDK_constructPluginInfo();
-            infoManager->featureInfos = aDynArrayConstruct(struct APluginSDKFeatureInfoDynArray);
-            infoManager->classInfos = aDynArrayConstruct(struct APluginSDKClassInfoDynArray);
+            infoManager->featureInfos = ADynArray_construct(struct APluginSDKFeatureInfoDynArray);
+            infoManager->classInfos = ADynArray_construct(struct APluginSDKClassInfoDynArray);
             if(infoManager->pluginInfo == NULL
                || infoManager->featureInfos == NULL
                || infoManager->classInfos == NULL)
@@ -203,7 +204,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
             info->parameterNames = splittedParameterList[1];
             free(splittedParameterList);
             info->functionPointer = functionPtr;
-            aDynArrayAdd(infoManager->featureInfos, info);
+            ADynArray_add(infoManager->featureInfos, info);
         }
         return info != NULL;
     }
@@ -222,7 +223,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         info->className = featureClassName;
         info->createInstance = createInstance;
         info->deleteInstance = deleteInstance;
-        aDynArrayAdd(infoManager->classInfos, info);
+        ADynArray_add(infoManager->classInfos, info);
         return true;
     }
 
@@ -231,14 +232,14 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
         if(infoManager == NULL)
             return 0;
-        return aDynArraySize(infoManager->featureInfos);
+        return ADynArray_size(infoManager->featureInfos);
     }
     static const struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* _private_APluginSDK_getFeatureInfo(size_t index)
     {
         struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
-        if(infoManager == NULL || index >= aDynArraySize(infoManager->featureInfos))
+        if(infoManager == NULL || index >= ADynArray_size(infoManager->featureInfos))
             return NULL;
-        return aDynArrayGet(infoManager->featureInfos, index);
+        return ADynArray_get(infoManager->featureInfos, index);
     }
     static const struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* const* _private_APluginSDK_getFeatureInfos(void)
     {
@@ -253,14 +254,14 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
         if(infoManager == NULL)
             return 0;
-        return aDynArraySize(infoManager->classInfos);
+        return ADynArray_size(infoManager->classInfos);
     }
     static const struct APLUGINLIBRARY_NAMESPACE APluginClassInfo* _private_APluginSDK_getClassInfo(size_t index)
     {
         struct _private_APluginSDK_InfoManager* infoManager = _private_APluginSDK_getInfoManagerInstance();
-        if(infoManager == NULL || index >= aDynArraySize(infoManager->classInfos))
+        if(infoManager == NULL || index >= ADynArray_size(infoManager->classInfos))
             return NULL;
-        return aDynArrayGet(infoManager->classInfos, index);
+        return ADynArray_get(infoManager->classInfos, index);
     }
     static const struct APLUGINLIBRARY_NAMESPACE APluginClassInfo* const* _private_APluginSDK_getClassInfos(void)
     {
@@ -318,13 +319,13 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         bool ret;
         if(str == NULL || dynArray == NULL)
             return false;
-        dynArraySize = aDynArraySize(dynArray);
-        if(dynArraySize == 0 || aDynArrayGet(dynArray, dynArraySize - 1) != '\0') {
-            if(!aDynArrayAdd(dynArray, '\0'))
+        dynArraySize = ADynArray_size(dynArray);
+        if(dynArraySize == 0 || ADynArray_get(dynArray, dynArraySize - 1) != '\0') {
+            if(!ADynArray_add(dynArray, '\0'))
                 return false;
         }
-        ret = (strcmp(aDynArrayBuffer(dynArray), str) == 0);
-        aDynArrayRemove(dynArray, dynArraySize, 1);
+        ret = (strcmp(ADynArray_buffer(dynArray), str) == 0);
+        ADynArray_remove(dynArray, dynArraySize, 1);
         return ret;
     }
 
@@ -333,52 +334,52 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         struct APluginSDKCString *tmpParameterList, *typeString, *tmpString, *tmpTypesString, *tmpNamesString;
         size_t tmp, parameterListLength = strlen(parameterList);
         char** returnArray;
-        tmpParameterList = aDynArrayConstruct(struct APluginSDKCString);
-        typeString = aDynArrayConstruct(struct APluginSDKCString);
-        tmpString = aDynArrayConstruct(struct APluginSDKCString);
-        tmpTypesString = aDynArrayConstruct(struct APluginSDKCString);
-        tmpNamesString = aDynArrayConstruct(struct APluginSDKCString);
-        aDynArrayAddArray(tmpParameterList, parameterList, parameterListLength);
+        tmpParameterList = ADynArray_construct(struct APluginSDKCString);
+        typeString = ADynArray_construct(struct APluginSDKCString);
+        tmpString = ADynArray_construct(struct APluginSDKCString);
+        tmpTypesString = ADynArray_construct(struct APluginSDKCString);
+        tmpNamesString = ADynArray_construct(struct APluginSDKCString);
+        ADynArray_addArray(tmpParameterList, parameterList, parameterListLength);
         bool typeFront = true, firstRun = true;
         char last = ' ';
-        aDynArrayAdd(tmpParameterList, ','); /* terminate with ',' to flush last type and name */
+        ADynArray_add(tmpParameterList, ','); /* terminate with ',' to flush last type and name */
         for(tmp = 0; tmp < parameterListLength + 1; ++tmp) {
-            char current = aDynArrayGet(tmpParameterList, tmp);
+            char current = ADynArray_get(tmpParameterList, tmp);
             if(typeFront) {
                 if(current != ',' && (isalnum(current) || ispunct(current))) {
-                    aDynArrayAdd(typeString, current);
+                    ADynArray_add(typeString, current);
                 } else if(isspace(current) && _private_streq(typeString, "const")) {
-                    aDynArrayAdd(typeString, ' ');
+                    ADynArray_add(typeString, ' ');
                 } else if(current == '*' || current == '&') {
-                    aDynArrayAdd(typeString, current);
+                    ADynArray_add(typeString, current);
                     typeFront = false;
-                } else if(isspace(current) && !isspace(last) && aDynArraySize(typeString) != 0) {
+                } else if(isspace(current) && !isspace(last) && ADynArray_size(typeString) != 0) {
                     typeFront = false;
                 }
             } else {
                 if(current != ',' && (isalnum(current) || ispunct(current))) {
-                    aDynArrayAdd(tmpString, current);
+                    ADynArray_add(tmpString, current);
                 } else if(current == '*' || current == '&') {
-                    char typeStringLastChar = aDynArrayGet(typeString, aDynArraySize(typeString) - 1);
-                    if(aDynArraySize(tmpString) != 0 && typeStringLastChar != '*' && typeStringLastChar != '&') {
-                        aDynArrayAdd(typeString, ' ');
+                    char typeStringLastChar = ADynArray_get(typeString, ADynArray_size(typeString) - 1);
+                    if(ADynArray_size(tmpString) != 0 && typeStringLastChar != '*' && typeStringLastChar != '&') {
+                        ADynArray_add(typeString, ' ');
                     }
-                    aDynArrayAddDynArray(typeString, tmpString);
-                    aDynArrayAdd(typeString, current);
-                    aDynArrayClear(tmpString);
+                    ADynArray_addADynArray(typeString, tmpString);
+                    ADynArray_add(typeString, current);
+                    ADynArray_clear(tmpString);
                 } else if((isspace(current) || current == ',') && _private_streq(tmpString, "const")) {
-                    aDynArrayAddDynArray(typeString, tmpString);
-                    aDynArrayClear(tmpString);
+                    ADynArray_addADynArray(typeString, tmpString);
+                    ADynArray_clear(tmpString);
                 }
                 if(current == ',') {
                     if(!firstRun) {
-                        aDynArrayAddArray(tmpTypesString, ", ", 2);
-                        aDynArrayAddArray(tmpNamesString, ", ", 2);
+                        ADynArray_addArray(tmpTypesString, ", ", 2);
+                        ADynArray_addArray(tmpNamesString, ", ", 2);
                     }
-                    aDynArrayAddDynArray(tmpTypesString, typeString);
-                    aDynArrayAddDynArray(tmpNamesString, tmpString);
-                    aDynArrayClear(typeString);
-                    aDynArrayClear(tmpString);
+                    ADynArray_addADynArray(tmpTypesString, typeString);
+                    ADynArray_addADynArray(tmpNamesString, tmpString);
+                    ADynArray_clear(typeString);
+                    ADynArray_clear(tmpString);
                     typeFront = true;
                     firstRun = false;
                     current = ' '; /* 'last' should be ' ' */
@@ -386,21 +387,21 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
             }
             last = current;
         }
-        tmp = aDynArraySize(tmpTypesString);
+        tmp = ADynArray_size(tmpTypesString);
         char* types = (char*) malloc(sizeof(char) * (tmp + 1));
         memcpy(types, tmpTypesString->buffer, sizeof(char) * tmp);
         types[tmp] = '\0';
 
-        tmp = aDynArraySize(tmpNamesString);
+        tmp = ADynArray_size(tmpNamesString);
         char* names = (char*) malloc(sizeof(char) * (tmp + 1));
         memcpy(names, tmpNamesString->buffer, sizeof(char) * tmp);
         names[tmp] = '\0';
 
-        aDynArrayDestruct(tmpParameterList);
-        aDynArrayDestruct(typeString);
-        aDynArrayDestruct(tmpString);
-        aDynArrayDestruct(tmpTypesString);
-        aDynArrayDestruct(tmpNamesString);
+        ADynArray_destruct(tmpParameterList);
+        ADynArray_destruct(typeString);
+        ADynArray_destruct(tmpString);
+        ADynArray_destruct(tmpTypesString);
+        ADynArray_destruct(tmpNamesString);
 
         returnArray = (char**) malloc(sizeof(char*) * 2);
         returnArray[0] = types;
