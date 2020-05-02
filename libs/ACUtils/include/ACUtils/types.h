@@ -12,4 +12,7 @@
 #   endif
 #endif
 
+typedef void*(*ACUtilsReallocator)(void*, size_t);
+typedef void(*ACUtilsDeallocator)(void*);
+
 #endif /* ACUTILS_TYPES_H */
