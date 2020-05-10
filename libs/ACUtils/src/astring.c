@@ -12,8 +12,8 @@ struct AString
 {
     const ACUtilsReallocator reallocator;
     const ACUtilsDeallocator deallocator;
-    size_t capacity;
     size_t size;
+    size_t capacity;
     char *buffer;
 };
 
@@ -35,7 +35,7 @@ ACUTILS_HD_FUNC struct AString* AString_constructWithAllocator(ACUtilsReallocato
         struct AString tmpString = {.reallocator = reallocator, .deallocator = deallocator,
                 .size = 0, .capacity = private_ACUtils_AString_capacityMin};
         memcpy(string, &tmpString, sizeof(struct AString));
-        string->buffer = string->reallocator(NULL, (string->capacity + 1) * sizeof(char));
+        string->buffer = (char*) string->reallocator(NULL, (string->capacity + 1) * sizeof(char));
         if(string->buffer == NULL) {
             AString_destruct(string);
             return NULL;
