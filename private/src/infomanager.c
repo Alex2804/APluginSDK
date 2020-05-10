@@ -13,6 +13,7 @@
 #   define ACUTILS_ONE_SOURCE
 #endif
 #include "../../libs/ACUtils/include/ACUtils/adynarray.h"
+#include "../../libs/ACUtils/include/ACUtils/astring.h"
 
 #ifdef __cplusplus
 #   define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APLUGINSDK_NO_EXPORT
@@ -24,7 +25,6 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
 
     A_DYNAMIC_ARRAY_DEFINITION(PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APluginSDKFeatureInfoDynArray, struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo*);
     A_DYNAMIC_ARRAY_DEFINITION(PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APluginSDKClassInfoDynArray, struct APLUGINLIBRARY_NAMESPACE APluginClassInfo*);
-    A_DYNAMIC_ARRAY_DEFINITION(PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APluginSDKCString, char);
 
     struct _private_APluginSDK_InfoManager;
     static void _private_APluginSDK_releaseInfoManager(struct _private_APluginSDK_InfoManager*);
@@ -204,7 +204,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
             info->parameterNames = splittedParameterList[1];
             free(splittedParameterList);
             info->functionPointer = functionPtr;
-            ADynArray_add(infoManager->featureInfos, info);
+            ADynArray_append(infoManager->featureInfos, info);
         }
         return info != NULL;
     }
@@ -223,7 +223,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         info->className = featureClassName;
         info->createInstance = createInstance;
         info->deleteInstance = deleteInstance;
-        ADynArray_add(infoManager->classInfos, info);
+        ADynArray_append(infoManager->classInfos, info);
         return true;
     }
 
@@ -311,75 +311,58 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         free(info);
     }
 
-/* ===================================== _private_APluginSDK_splitParameterList ===================================== */
-
-    static bool _private_streq(struct APluginSDKCString *dynArray, const char *str)
-    {
-        size_t dynArraySize;
-        bool ret;
-        if(str == NULL || dynArray == NULL)
-            return false;
-        dynArraySize = ADynArray_size(dynArray);
-        if(dynArraySize == 0 || ADynArray_get(dynArray, dynArraySize - 1) != '\0') {
-            if(!ADynArray_add(dynArray, '\0'))
-                return false;
-        }
-        ret = (strcmp(ADynArray_buffer(dynArray), str) == 0);
-        ADynArray_remove(dynArray, dynArraySize, 1);
-        return ret;
-    }
+/* ====================================== private_APluginSDK_splitParameterList ===================================== */
 
     static char** _private_APluginSDK_splitParameterList(const char* parameterList)
     {
-        struct APluginSDKCString *tmpParameterList, *typeString, *tmpString, *tmpTypesString, *tmpNamesString;
+        struct AString *tmpParameterList, *typeString, *tmpString, *tmpTypesString, *tmpNamesString;
         size_t tmp, parameterListLength = strlen(parameterList);
         char** returnArray;
-        tmpParameterList = ADynArray_construct(struct APluginSDKCString);
-        typeString = ADynArray_construct(struct APluginSDKCString);
-        tmpString = ADynArray_construct(struct APluginSDKCString);
-        tmpTypesString = ADynArray_construct(struct APluginSDKCString);
-        tmpNamesString = ADynArray_construct(struct APluginSDKCString);
-        ADynArray_addArray(tmpParameterList, parameterList, parameterListLength);
+        tmpParameterList = AString_construct();
+        typeString = AString_construct();
+        tmpString = AString_construct();
+        tmpTypesString = AString_construct();
+        tmpNamesString = AString_construct();
+        AString_appendCString(tmpParameterList, parameterList, parameterListLength);
         bool typeFront = true, firstRun = true;
         char last = ' ';
-        ADynArray_add(tmpParameterList, ','); /* terminate with ',' to flush last type and name */
+        AString_append(tmpParameterList, ','); /* terminate with ',' to flush last type and name */
         for(tmp = 0; tmp < parameterListLength + 1; ++tmp) {
-            char current = ADynArray_get(tmpParameterList, tmp);
+            char current = AString_get(tmpParameterList, tmp);
             if(typeFront) {
                 if(current != ',' && (isalnum(current) || ispunct(current))) {
-                    ADynArray_add(typeString, current);
-                } else if(isspace(current) && _private_streq(typeString, "const")) {
-                    ADynArray_add(typeString, ' ');
+                    AString_append(typeString, current);
+                } else if(isspace(current) && strcmp(AString_buffer(typeString), "const") == 0) {
+                    AString_append(typeString, ' ');
                 } else if(current == '*' || current == '&') {
-                    ADynArray_add(typeString, current);
+                    AString_append(typeString, current);
                     typeFront = false;
-                } else if(isspace(current) && !isspace(last) && ADynArray_size(typeString) != 0) {
+                } else if(isspace(current) && !isspace(last) && AString_size(typeString) != 0) {
                     typeFront = false;
                 }
             } else {
                 if(current != ',' && (isalnum(current) || ispunct(current))) {
-                    ADynArray_add(tmpString, current);
+                    AString_append(tmpString, current);
                 } else if(current == '*' || current == '&') {
-                    char typeStringLastChar = ADynArray_get(typeString, ADynArray_size(typeString) - 1);
-                    if(ADynArray_size(tmpString) != 0 && typeStringLastChar != '*' && typeStringLastChar != '&') {
-                        ADynArray_add(typeString, ' ');
-                    }
-                    ADynArray_addADynArray(typeString, tmpString);
-                    ADynArray_add(typeString, current);
-                    ADynArray_clear(tmpString);
-                } else if((isspace(current) || current == ',') && _private_streq(tmpString, "const")) {
-                    ADynArray_addADynArray(typeString, tmpString);
-                    ADynArray_clear(tmpString);
+                    char typeStringLastChar = AString_get(typeString, AString_size(typeString) - 1);
+                    if(AString_size(tmpString) != 0 && typeStringLastChar != '*' && typeStringLastChar != '&')
+                        AString_append(typeString, ' ');
+                    AString_appendAString(typeString, tmpString);
+                    AString_append(typeString, current);
+                    AString_clear(tmpString);
+                } else if((isspace(current) || current == ',') && strcmp(AString_buffer(tmpString), "const") == 0) {
+                    AString_appendAString(typeString, tmpString);
+                    AString_clear(tmpString);
                 }
                 if(current == ',') {
                     if(!firstRun) {
-                        ADynArray_addArray(tmpTypesString, ", ", 2);
-                        ADynArray_addArray(tmpNamesString, ", ", 2);
+                        AString_appendCString(tmpTypesString, ", ", 2);
+                        AString_appendCString(tmpNamesString, ", ", 2);
                     }
-                    ADynArray_addADynArray(tmpTypesString, typeString);
-                    ADynArray_addADynArray(tmpNamesString, tmpString);
-                    ADynArray_clear(typeString);
-                    ADynArray_clear(tmpString);
+                    AString_appendAString(tmpTypesString, typeString);
+                    AString_appendAString(tmpNamesString, tmpString);
+                    AString_clear(typeString);
+                    AString_clear(tmpString);
                     typeFront = true;
                     firstRun = false;
                     current = ' '; /* 'last' should be ' ' */
@@ -387,21 +370,21 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
             }
             last = current;
         }
-        tmp = ADynArray_size(tmpTypesString);
+        tmp = AString_size(tmpTypesString);
         char* types = (char*) malloc(sizeof(char) * (tmp + 1));
-        memcpy(types, tmpTypesString->buffer, sizeof(char) * tmp);
+        memcpy(types, AString_buffer(tmpTypesString), sizeof(char) * tmp);
         types[tmp] = '\0';
 
-        tmp = ADynArray_size(tmpNamesString);
+        tmp = AString_size(tmpNamesString);
         char* names = (char*) malloc(sizeof(char) * (tmp + 1));
-        memcpy(names, tmpNamesString->buffer, sizeof(char) * tmp);
+        memcpy(names, AString_buffer(tmpNamesString), sizeof(char) * tmp);
         names[tmp] = '\0';
 
-        ADynArray_destruct(tmpParameterList);
-        ADynArray_destruct(typeString);
-        ADynArray_destruct(tmpString);
-        ADynArray_destruct(tmpTypesString);
-        ADynArray_destruct(tmpNamesString);
+        AString_destruct(tmpParameterList);
+        AString_destruct(typeString);
+        AString_destruct(tmpString);
+        AString_destruct(tmpTypesString);
+        AString_destruct(tmpNamesString);
 
         returnArray = (char**) malloc(sizeof(char*) * 2);
         returnArray[0] = types;
