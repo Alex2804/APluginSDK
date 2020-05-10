@@ -128,7 +128,7 @@ ACUTILS_HD_FUNC void AString_clear(struct AString *str)
 ACUTILS_HD_FUNC void AString_remove(struct AString *str, size_t index, size_t count)
 {
     if(str != NULL && index < str->size) {
-        if(index + count >= str->size) {
+        if(count >= -index - 1 || index + count >= str->size) {
             str->size = index;
             str->buffer[str->size] = '\0';
         } else {
@@ -140,6 +140,10 @@ ACUTILS_HD_FUNC void AString_remove(struct AString *str, size_t index, size_t co
 
 ACUTILS_HD_FUNC bool AString_insert(struct AString *str, size_t index, char c)
 {
+    if(c == '\0') {
+        AString_remove(str, index, -1);
+        return true;
+    }
     return AString_insertCString(str, index, &c, 1);
 }
 ACUTILS_HD_FUNC bool AString_insertCString(struct AString *str, size_t index, const char *cstr, size_t len)
@@ -210,5 +214,23 @@ ACUTILS_HD_FUNC bool AString_setRange(struct AString *str, size_t index, size_t 
     str->buffer[str->size] = '\0';
     return true;
 }
+
+ACUTILS_HD_FUNC bool AString_equals(const struct AString *str1, const struct AString *str2)
+{
+    if(str2 == NULL || str1 == NULL)
+        return str1 == str2;
+    return strcmp(str1->buffer, str2->buffer) == 0;
+}
+ACUTILS_HD_FUNC int AString_compare(const struct AString *str1, const struct AString *str2)
+{
+    if(str2 == NULL && str1 == NULL)
+        return 0;
+    else if(str1 == NULL)
+        return -1;
+    else if(str2 == NULL)
+        return 1;
+    return strcmp(str1->buffer, str2->buffer);
+}
+
 
 #endif
