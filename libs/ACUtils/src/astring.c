@@ -266,6 +266,18 @@ ACUTILS_HD_FUNC int AString_compare(const struct AString *str1, const struct ASt
     return strcmp(str1->buffer, str2->buffer);
 }
 
+ACUTILS_HD_FUNC struct AString* AString_clone(const struct AString *str)
+{
+    struct AString *cloned;
+    if(str == NULL)
+        return NULL;
+    cloned = AString_constructWithCapacityAndAllocator(str->capacity, str->reallocator, str->deallocator);
+    if(cloned == NULL)
+        return NULL;
+    memcpy(cloned->buffer, str->buffer, str->size + 1);
+    cloned->size = str->size;
+    return cloned;
+}
 ACUTILS_HD_FUNC struct AString* AString_substring(const struct AString *str, size_t index, size_t count)
 {
     struct AString *substring;

@@ -114,7 +114,7 @@ START_TEST(test_AString_construct_destruct_withCapacityAndAllocator_valid)
     ck_assert_ptr_eq(string->deallocator, private_ACUtilsTest_AString_free);
     ACUTILSTEST_ASTRING_CHECK_ASTRING(*string, "", 666);
     AString_destruct(string);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, private_ACUtilsTest_AString_freeCount);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
 }
 END_TEST
 START_TEST(test_AString_construct_destruct_withAllocator_invalid)
@@ -146,13 +146,13 @@ START_TEST(test_AString_construct_destruct_withAllocator_noMemoryAvailable)
     private_ACUtilsTest_AString_reallocCount = private_ACUtilsTest_AString_freeCount = 0;
     string = AString_constructWithAllocator(private_ACUtilsTest_AString_realloc, private_ACUtilsTest_AString_free);
     ck_assert_ptr_null(string);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, 0);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_freeCount, 0);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_setReallocFail(true, 1);
     string = AString_constructWithAllocator(private_ACUtilsTest_AString_realloc, private_ACUtilsTest_AString_free);
     ck_assert_ptr_null(string);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, 1);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_freeCount, 1);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(1);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
 }
 END_TEST
 START_TEST(test_AString_construct_destruct_withCapacityAndAllocator_noMemoryAvailable)
@@ -162,20 +162,21 @@ START_TEST(test_AString_construct_destruct_withCapacityAndAllocator_noMemoryAvai
     private_ACUtilsTest_AString_reallocCount = private_ACUtilsTest_AString_freeCount = 0;
     string = AString_constructWithCapacityAndAllocator(666, private_ACUtilsTest_AString_realloc, private_ACUtilsTest_AString_free);
     ck_assert_ptr_null(string);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, 0);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_freeCount, 0);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_setReallocFail(true, 1);
     string = AString_constructWithCapacityAndAllocator(666, private_ACUtilsTest_AString_realloc, private_ACUtilsTest_AString_free);
     ck_assert_ptr_null(string);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, 1);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_freeCount, 1);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(1);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
 }
 END_TEST
 START_TEST(test_AString_construct_destruct_nullptr)
 {
-    private_ACUtilsTest_AString_freeCount = 0;
+    private_ACUtilsTest_AString_reallocCount = private_ACUtilsTest_AString_freeCount = 0;
     AString_destruct(NULL);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_freeCount, 0);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
 }
 END_TEST
 
@@ -305,7 +306,7 @@ START_TEST(test_AString_reserve_failure_noMemoryAvailable)
 END_TEST
 START_TEST(test_AString_reserve_failure_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_reserve(NULL, 42), false);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -356,7 +357,7 @@ START_TEST(test_AString_shrinkToFit_failure_noMemoryAvailable)
 END_TEST
 START_TEST(test_AString_shrinkToFit_failure_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_shrinkToFit(NULL), false);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -376,7 +377,7 @@ START_TEST(test_AString_clear)
 END_TEST
 START_TEST(test_AString_clear_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     AString_clear(NULL);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -440,7 +441,7 @@ START_TEST(test_AString_remove_indexBeyoundBounds)
 END_TEST
 START_TEST(test_AString_remove_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     AString_remove(NULL, 5, 10);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -500,7 +501,7 @@ START_TEST(test_AString_trim_completeString)
 END_TEST
 START_TEST(test_AString_trim_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     AString_trim(NULL, ' ');
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -540,7 +541,7 @@ START_TEST(test_AString_trimFront_completeString)
 END_TEST
 START_TEST(test_AString_trimFront_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     AString_trimFront(NULL, ' ');
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -580,7 +581,7 @@ START_TEST(test_AString_trimBack_completeString)
 END_TEST
 START_TEST(test_AString_trimBack_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     AString_trimBack(NULL, ' ');
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -653,7 +654,7 @@ START_TEST(test_AString_insert_failure_bufferExpansionFailed)
 END_TEST
 START_TEST(test_AString_insert_failure_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_insert(NULL, 0, '0'), false);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -743,7 +744,7 @@ START_TEST(test_AString_insertArray_failure_bufferExpansionFailed)
 END_TEST
 START_TEST(test_AString_insertArray_failure_nullptrDestArray)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_insertCString(NULL, 0, "012", 3), false);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -906,7 +907,7 @@ START_TEST(test_AString_append_failure_bufferExpansionFailed)
 END_TEST
 START_TEST(test_AString_append_failure_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_append(NULL, '0'), false);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -966,7 +967,7 @@ START_TEST(test_AString_appendCString_failure_bufferExpansionFailed)
 END_TEST
 START_TEST(test_AString_appendCString_failure_nullptrDestArray)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_insertCString(NULL, 0, "012", 3), false);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -1097,7 +1098,7 @@ START_TEST(test_AString_get_indexOutOfBounds)
 END_TEST
 START_TEST(test_AString_get_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_get(NULL, 0), '\0');
     ck_assert_uint_eq(AString_get(NULL, 666), '\0');
@@ -1154,7 +1155,7 @@ START_TEST(test_AString_set_failure_indexBeyondSize_bufferExpansionFailed)
 END_TEST
 START_TEST(test_AString_set_failure_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_set(NULL, 0, '0'), false);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -1261,7 +1262,7 @@ START_TEST(test_AString_setRange_failure_indexAndRangeBeyondSize_bufferExpansion
 END_TEST
 START_TEST(test_AString_setRange_failure_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_uint_eq(AString_setRange(NULL, 0, 0, '0'), false);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -1399,6 +1400,41 @@ START_TEST(test_AString_compare_nullptr)
 END_TEST
 
 
+START_TEST(test_AString_clone_valid)
+{
+    struct AString string = private_ACUtilsTest_AString_constructTestString("01234567", 666);
+    struct AString *cloned;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
+    cloned = AString_clone(&string);
+    ck_assert_ptr_nonnull(cloned);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(*cloned, "01234567", 666);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string, "01234567", 666);
+    AString_destruct(cloned);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
+    private_ACUtilsTest_AString_destructTestString(string);
+}
+END_TEST
+START_TEST(test_AString_clone_noMemoryAvailable)
+{
+    struct AString string = private_ACUtilsTest_AString_constructTestString("01234567", 666);
+    struct AString *cloned;
+    private_ACUtilsTest_AString_setReallocFail(true, 0);
+    cloned = AString_clone(&string);
+    ck_assert_ptr_null(cloned);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string, "01234567", 666);
+    private_ACUtilsTest_AString_destructTestString(string);
+}
+END_TEST
+START_TEST(test_AString_clone_nullptr)
+{
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
+    private_ACUtilsTest_AString_reallocCount = 0;
+    ck_assert_ptr_null(AString_clone(NULL));
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+}
+END_TEST
+
+
 START_TEST(test_AString_substring_indexRangeInBounds)
 {
     struct AString string = private_ACUtilsTest_AString_constructTestString("abcd01234567wxyz", 16);
@@ -1490,7 +1526,7 @@ START_TEST(test_AString_substring_reallocationFailed)
 END_TEST
 START_TEST(test_AString_substring_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_ptr_null(AString_substring(NULL, 0, -1));
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
@@ -1510,7 +1546,7 @@ START_TEST(test_AString_split_emptyString)
     ACUTILSTEST_ASTRING_CHECK_ASTRING(*ADynArray_get(splitted, 0), "", 8);
     AString_freeSplitted(splitted);
     ACUTILSTEST_ASTRING_CHECK_ASTRING(string, "", 8);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, private_ACUtilsTest_AString_freeCount);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_destructTestString(string);
 }
 END_TEST
@@ -1526,7 +1562,7 @@ START_TEST(test_AString_split_noDelimiter)
     ACUTILSTEST_ASTRING_CHECK_ASTRING(*ADynArray_get(splitted, 0), "01234567", 8);
     AString_freeSplitted(splitted);
     ACUTILSTEST_ASTRING_CHECK_ASTRING(string, "01234567", 8);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, private_ACUtilsTest_AString_freeCount);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_destructTestString(string);
 }
 END_TEST
@@ -1543,7 +1579,7 @@ START_TEST(test_AString_split_firstCharDelimiter)
     ACUTILSTEST_ASTRING_CHECK_ASTRING(*ADynArray_get(splitted, 1), "0123456", 8);
     AString_freeSplitted(splitted);
     ACUTILSTEST_ASTRING_CHECK_ASTRING(string, ";0123456", 8);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, private_ACUtilsTest_AString_freeCount);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_destructTestString(string);
 }
 END_TEST
@@ -1560,7 +1596,7 @@ START_TEST(test_AString_split_lastCharDelimiter)
     ACUTILSTEST_ASTRING_CHECK_ASTRING(*ADynArray_get(splitted, 1), "", 8);
     AString_freeSplitted(splitted);
     ACUTILSTEST_ASTRING_CHECK_ASTRING(string, "0123456;", 8);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, private_ACUtilsTest_AString_freeCount);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_destructTestString(string);
 }
 END_TEST
@@ -1580,7 +1616,7 @@ START_TEST(test_AString_split_multipleDelimiters)
     ACUTILSTEST_ASTRING_CHECK_ASTRING(*ADynArray_get(splitted, 4), "", 8);
     AString_freeSplitted(splitted);
     ACUTILSTEST_ASTRING_CHECK_ASTRING(string, ";01;;23;", 8);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, private_ACUtilsTest_AString_freeCount);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_destructTestString(string);
 }
 END_TEST
@@ -1597,7 +1633,7 @@ START_TEST(test_AString_split_multipleDelimiters_discardEmpty)
     ACUTILSTEST_ASTRING_CHECK_ASTRING(*ADynArray_get(splitted, 1), "23", 8);
     AString_freeSplitted(splitted);
     ACUTILSTEST_ASTRING_CHECK_ASTRING(string, ";01;;23;", 8);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, private_ACUtilsTest_AString_freeCount);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_destructTestString(string);
 }
 END_TEST
@@ -1609,13 +1645,18 @@ START_TEST(test_AString_split_noMemoryAvailable)
     splitted = AString_split(&string, ';', false);
     ACUTILSTEST_ASTRING_CHECK_ASTRING(string, ";01;;23;", 8);
     ck_assert_ptr_null(splitted);
-    ck_assert_uint_eq(private_ACUtilsTest_AString_reallocCount, private_ACUtilsTest_AString_freeCount);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
+    private_ACUtilsTest_AString_setReallocFail(true, 2);
+    splitted = AString_split(&string, ';', false);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string, ";01;;23;", 8);
+    ck_assert_ptr_null(splitted);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(private_ACUtilsTest_AString_freeCount);
     private_ACUtilsTest_AString_destructTestString(string);
 }
 END_TEST
 START_TEST(test_AString_split_nullptr)
 {
-    private_ACUtilsTest_AString_reallocFail = false;
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
     private_ACUtilsTest_AString_reallocCount = 0;
     ck_assert_ptr_null(AString_split(NULL, ' ', false));
     AString_freeSplitted(NULL);
@@ -1635,7 +1676,7 @@ Suite* private_ACUtilsTest_AString_getTestSuite(void)
           *test_case_AString_insertCString, *test_case_AString_insertAString, *test_case_AString_append,
           *test_case_AString_appendCString, *test_case_AString_appendAString, *test_case_AString_get,
           *test_case_AString_set, *test_case_AString_setRange, *test_case_AString_equals, *test_case_AString_compare,
-          *test_case_AString_substring, *test_case_AString_split;
+          *test_case_AString_clone, *test_case_AString_substring, *test_case_AString_split;
 
     s = suite_create("AString Test Suite");
 
@@ -1831,6 +1872,12 @@ Suite* private_ACUtilsTest_AString_getTestSuite(void)
     tcase_add_test(test_case_AString_substring, test_AString_substring_reallocationFailed);
     tcase_add_test(test_case_AString_substring, test_AString_substring_nullptr);
     suite_add_tcase(s, test_case_AString_substring);
+
+    test_case_AString_clone = tcase_create("AString Test Case: AString_clone");
+    tcase_add_test(test_case_AString_clone, test_AString_clone_valid);
+    tcase_add_test(test_case_AString_clone, test_AString_clone_noMemoryAvailable);
+    tcase_add_test(test_case_AString_clone, test_AString_clone_nullptr);
+    suite_add_tcase(s, test_case_AString_clone);
 
     test_case_AString_substring = tcase_create("AString Test Case: AString_substring");
     tcase_add_test(test_case_AString_substring, test_AString_substring_indexRangeInBounds);

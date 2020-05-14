@@ -43,6 +43,7 @@ ACUTILS_HD_FUNC bool AString_setRange(struct AString *str, size_t index, size_t 
 ACUTILS_HD_FUNC bool AString_equals(const struct AString *str1, const struct AString *str2);
 ACUTILS_HD_FUNC int AString_compare(const struct AString *str1, const struct AString *str2);
 
+ACUTILS_HD_FUNC struct AString* AString_clone(const struct AString *str);
 ACUTILS_HD_FUNC struct AString* AString_substring(const struct AString *str, size_t index, size_t count);
 
 ACUTILS_HD_FUNC struct ASplittedString* AString_split(const struct AString *str, char c, bool discardEmpty);
