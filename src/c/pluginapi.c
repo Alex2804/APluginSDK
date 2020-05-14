@@ -18,5 +18,5 @@ APLUGINSDK_NO_EXPORT void APLUGINLIBRARY_NAMESPACE APluginSDK_free(void* ptr)
 
 const struct APLUGINLIBRARY_NAMESPACE APluginInfo* PRIVATE_APLUGINSDK_API_NAMESPACE APluginSDK_getPluginInfo(void)
 {
-    return PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE _private_APluginSDK_getPluginInfo();
+    return PRIVATE_APLUGINSDK_PRIVATE_NAMESPACE private_APluginSDK_getPluginInfo();
 }

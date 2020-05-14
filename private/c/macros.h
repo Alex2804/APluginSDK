@@ -20,21 +20,21 @@
 
 
 /* private plugin name macro */
-#define PRIVATE_APLUGINSDK_SET_NAME(pluginName) _private_APluginSDK_setPluginName(#pluginName)
+#define PRIVATE_APLUGINSDK_SET_NAME(pluginName) private_APluginSDK_setPluginName(#pluginName)
 
 /* private plugin version macro */
-#define PRIVATE_APLUGINSDK_SET_VERSION(major, minor, patch) _private_APluginSDK_setPluginVersion(major, minor, patch)
+#define PRIVATE_APLUGINSDK_SET_VERSION(major, minor, patch) private_APluginSDK_setPluginVersion(major, minor, patch)
 
 /* private plugin feature macro */
 #define PRIVATE_APLUGINSDK_REGISTER_FEATURE(returnType, featureGroup, featureName, ...)                                                           \
-    APLUGINSDK_NO_EXPORT const char* _private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_returnType = #returnType;  \
-    APLUGINSDK_NO_EXPORT const char* _private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_parameters = #__VA_ARGS__; \
-    APLUGINSDK_NO_EXPORT returnType _private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_function(__VA_ARGS__)
+    APLUGINSDK_NO_EXPORT const char* private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_returnType = #returnType;  \
+    APLUGINSDK_NO_EXPORT const char* private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_parameters = #__VA_ARGS__; \
+    APLUGINSDK_NO_EXPORT returnType private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_function(__VA_ARGS__)
 
 #define PRIVATE_APLUGINSDK_RECORD_FEATURE(featureGroup, featureName)                                                   \
-    _private_APluginSDK_registerFeature(#featureGroup, #featureName,                                                   \
-        _private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_returnType,                  \
-        _private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_parameters,                  \
-        (void*) _private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_function)
+    private_APluginSDK_registerFeature(#featureGroup, #featureName,                                                   \
+        private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_returnType,                  \
+        private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_parameters,                  \
+        (void*) private_APluginSDK_plugin_implemenation_feature_##featureGroup##_##featureName##_function)
 
 #endif /* APLUGINSDK_C_MACROS_H */
