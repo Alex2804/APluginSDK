@@ -1313,6 +1313,42 @@ START_TEST(test_AString_equals_nullptr)
 END_TEST
 
 
+START_TEST(test_AString_equalsCString_valid)
+{
+    struct AString string1 = private_ACUtilsTest_AString_constructTestString("012345", 8);
+    struct AString string2 = private_ACUtilsTest_AString_constructTestString("543210", 8);
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
+    ck_assert_uint_eq(AString_equalsCString(&string1, "012345"), true);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string1, "012345", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_uint_eq(AString_equalsCString(&string1, "543210"), false);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string1, "012345", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_uint_eq(AString_equalsCString(&string2, "543210"), true);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string2, "543210", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_uint_eq(AString_equalsCString(&string2, "012345"), false);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string2, "543210", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    private_ACUtilsTest_AString_destructTestString(string1);
+    private_ACUtilsTest_AString_destructTestString(string2);
+}
+END_TEST
+START_TEST(test_AString_equalsCString_nullptr)
+{
+    struct AString string = private_ACUtilsTest_AString_constructTestString("", 8);
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
+    ck_assert_uint_eq(AString_equalsCString(&string, NULL), false);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string, "", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_uint_eq(AString_equalsCString(NULL, ""), false);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_uint_eq(AString_equalsCString(NULL, NULL), true);
+    private_ACUtilsTest_AString_destructTestString(string);
+}
+END_TEST
+
+
 START_TEST(test_AString_compare_equals)
 {
     struct AString string1 = private_ACUtilsTest_AString_constructTestString("012345", 8);
@@ -1395,6 +1431,77 @@ START_TEST(test_AString_compare_nullptr)
     ACUTILSTEST_ASTRING_CHECK_ASTRING(string, "", 8);
     ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
     ck_assert_int_eq(AString_compare(NULL, NULL), 0);
+    private_ACUtilsTest_AString_destructTestString(string);
+}
+END_TEST
+
+
+START_TEST(test_AString_compareCString_equals)
+{
+    struct AString string1 = private_ACUtilsTest_AString_constructTestString("012345", 8);
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
+    ck_assert_int_eq(AString_compareCString(&string1, "012345"), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string1, "012345", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    private_ACUtilsTest_AString_destructTestString(string1);
+}
+END_TEST
+START_TEST(test_AString_compareCString_firstLessThanSecond)
+{
+    struct AString string1 = private_ACUtilsTest_AString_constructTestString("", 8);
+    struct AString string2 = private_ACUtilsTest_AString_constructTestString("a", 8);
+    struct AString string3 = private_ACUtilsTest_AString_constructTestString("b", 8);
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
+    ck_assert_int_lt(AString_compareCString(&string1, "a"), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string1, "", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_int_lt(AString_compareCString(&string2, "b"), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string2, "a", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_int_lt(AString_compareCString(&string2, "ba"), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string2, "a", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_int_lt(AString_compareCString(&string3, "ba"), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string3, "b", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    private_ACUtilsTest_AString_destructTestString(string1);
+    private_ACUtilsTest_AString_destructTestString(string2);
+    private_ACUtilsTest_AString_destructTestString(string3);
+}
+END_TEST
+START_TEST(test_AString_compareCString_firstGreaterThanSecond)
+{
+    struct AString string1 = private_ACUtilsTest_AString_constructTestString("a", 8);
+    struct AString string2 = private_ACUtilsTest_AString_constructTestString("b", 8);
+    struct AString string3 = private_ACUtilsTest_AString_constructTestString("ba", 8);
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
+    ck_assert_int_gt(AString_compareCString(&string1, ""), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string1, "a", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_int_gt(AString_compareCString(&string2, "a"), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string2, "b", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_int_gt(AString_compareCString(&string3, "a"), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string3, "ba", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_int_gt(AString_compareCString(&string3, "b"), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string3, "ba", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    private_ACUtilsTest_AString_destructTestString(string1);
+    private_ACUtilsTest_AString_destructTestString(string2);
+    private_ACUtilsTest_AString_destructTestString(string3);
+}
+END_TEST
+START_TEST(test_AString_compareCString_nullptr)
+{
+    struct AString string = private_ACUtilsTest_AString_constructTestString("", 8);
+    private_ACUtilsTest_AString_setReallocFail(false, 0);
+    ck_assert_int_gt(AString_compareCString(&string, NULL), 0);
+    ACUTILSTEST_ASTRING_CHECK_ASTRING(string, "", 8);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_int_lt(AString_compareCString(NULL, ""), 0);
+    ACUTILSTEST_ASTRING_CHECK_REALLOC(0);
+    ck_assert_int_eq(AString_compareCString(NULL, NULL), 0);
     private_ACUtilsTest_AString_destructTestString(string);
 }
 END_TEST
@@ -1675,7 +1782,8 @@ Suite* private_ACUtilsTest_AString_getTestSuite(void)
           *test_case_AString_trimFront, *test_case_AString_trimBack, *test_case_AString_insert,
           *test_case_AString_insertCString, *test_case_AString_insertAString, *test_case_AString_append,
           *test_case_AString_appendCString, *test_case_AString_appendAString, *test_case_AString_get,
-          *test_case_AString_set, *test_case_AString_setRange, *test_case_AString_equals, *test_case_AString_compare,
+          *test_case_AString_set, *test_case_AString_setRange, *test_case_AString_equals,
+          *test_case_AString_equalsCString, *test_case_AString_compare, *test_case_AString_compareCString,
           *test_case_AString_clone, *test_case_AString_substring, *test_case_AString_split;
 
     s = suite_create("AString Test Suite");
@@ -1858,12 +1966,24 @@ Suite* private_ACUtilsTest_AString_getTestSuite(void)
     tcase_add_test(test_case_AString_equals, test_AString_equals_nullptr);
     suite_add_tcase(s, test_case_AString_equals);
 
+    test_case_AString_equalsCString = tcase_create("AString Test Case: AString_equalsCString");
+    tcase_add_test(test_case_AString_equalsCString, test_AString_equalsCString_valid);
+    tcase_add_test(test_case_AString_equalsCString, test_AString_equalsCString_nullptr);
+    suite_add_tcase(s, test_case_AString_equalsCString);
+
     test_case_AString_compare = tcase_create("AString Test Case: AString_compare");
     tcase_add_test(test_case_AString_compare, test_AString_compare_equals);
     tcase_add_test(test_case_AString_compare, test_AString_compare_firstLessThanSecond);
     tcase_add_test(test_case_AString_compare, test_AString_compare_firstGreaterThanSecond);
     tcase_add_test(test_case_AString_compare, test_AString_compare_nullptr);
     suite_add_tcase(s, test_case_AString_compare);
+
+    test_case_AString_compareCString = tcase_create("AString Test Case: AString_compareCString");
+    tcase_add_test(test_case_AString_compareCString, test_AString_compareCString_equals);
+    tcase_add_test(test_case_AString_compareCString, test_AString_compareCString_firstLessThanSecond);
+    tcase_add_test(test_case_AString_compareCString, test_AString_compareCString_firstGreaterThanSecond);
+    tcase_add_test(test_case_AString_compareCString, test_AString_compareCString_nullptr);
+    suite_add_tcase(s, test_case_AString_compareCString);
 
     test_case_AString_substring = tcase_create("AString Test Case: AString_substring");
     tcase_add_test(test_case_AString_substring, test_AString_substring_indexRangeInBounds);

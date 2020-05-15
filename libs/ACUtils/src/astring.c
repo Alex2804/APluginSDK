@@ -255,6 +255,12 @@ ACUTILS_HD_FUNC bool AString_equals(const struct AString *str1, const struct ASt
         return str1 == str2;
     return strcmp(str1->buffer, str2->buffer) == 0;
 }
+ACUTILS_HD_FUNC bool AString_equalsCString(const struct AString *str, const char *cstr)
+{
+    if(str == NULL || cstr == NULL)
+        return str == NULL && cstr == NULL;
+    return strcmp(str->buffer, cstr) == 0;
+}
 ACUTILS_HD_FUNC int AString_compare(const struct AString *str1, const struct AString *str2)
 {
     if(str2 == NULL && str1 == NULL)
@@ -264,6 +270,16 @@ ACUTILS_HD_FUNC int AString_compare(const struct AString *str1, const struct ASt
     else if(str2 == NULL)
         return 1;
     return strcmp(str1->buffer, str2->buffer);
+}
+ACUTILS_HD_FUNC int AString_compareCString(const struct AString *str, const char *cstr)
+{
+    if(str == NULL && cstr == NULL)
+        return 0;
+    else if(str == NULL)
+        return -1;
+    else if(cstr == NULL)
+        return 1;
+    return strcmp(str->buffer, cstr);
 }
 
 ACUTILS_HD_FUNC struct AString* AString_clone(const struct AString *str)
