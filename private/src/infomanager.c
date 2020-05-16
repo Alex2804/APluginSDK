@@ -4,16 +4,15 @@
 #   include "../../pluginapi.h"
 #endif
 
-#include <ctype.h>
 #include <stdlib.h>
-
-#include "../privateplugininfos.h"
 
 #ifndef ACUTILS_ONE_SOURCE
 #   define ACUTILS_ONE_SOURCE
 #endif
 #include "../../libs/ACUtils/include/ACUtils/adynarray.h"
-#include "../../libs/ACUtils/include/ACUtils/astring.h"
+
+#include "../privateplugininfos.h"
+#include "../signatureparser.h"
 
 #ifdef __cplusplus
 #   define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APLUGINSDK_NO_EXPORT
@@ -31,8 +30,6 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
     static struct private_APluginSDK_InfoManager* private_APluginSDK_initInfoManager(struct private_APluginSDK_InfoManager*);
     static struct APLUGINLIBRARY_NAMESPACE APluginInfo* private_APluginSDK_constructPluginInfo(void);
     static void private_APluginSDK_destructPluginInfo(struct APLUGINLIBRARY_NAMESPACE APluginInfo*);
-
-    static char** private_APluginSDK_splitParameterList(const char *parameterList);
 
     struct PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT private_APluginSDK_InfoManager {
         struct APLUGINLIBRARY_NAMESPACE APluginInfo *pluginInfo;
@@ -283,7 +280,7 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         free(info);
     }
 
-    static struct APLUGINLIBRARY_NAMESPACE APluginInfo* private_APluginSDK_constructPluginInfo(void)
+static struct APLUGINLIBRARY_NAMESPACE APluginInfo* private_APluginSDK_constructPluginInfo(void)
     {
         struct APLUGINLIBRARY_NAMESPACE APluginInfo* info = (struct APLUGINLIBRARY_NAMESPACE APluginInfo*) malloc(sizeof(struct APLUGINLIBRARY_NAMESPACE APluginInfo));
         info->privateInfo = private_APluginSDK_constructPrivatePluginInfo();
@@ -309,87 +306,6 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         private_APluginSDK_destructPrivatePluginInfo(info->privateInfo);
         free(info->pluginName);
         free(info);
-    }
-
-/* ====================================== private_APluginSDK_splitParameterList ===================================== */
-
-    static char** private_APluginSDK_splitParameterList(const char* parameterList)
-    {
-        struct AString *tmpParameterList, *typeString, *tmpString, *tmpTypesString, *tmpNamesString;
-        size_t tmp, parameterListLength = strlen(parameterList);
-        char** returnArray;
-        tmpParameterList = AString_construct();
-        typeString = AString_construct();
-        tmpString = AString_construct();
-        tmpTypesString = AString_construct();
-        tmpNamesString = AString_construct();
-        AString_appendCString(tmpParameterList, parameterList, parameterListLength);
-        bool typeFront = true, firstRun = true;
-        char last = ' ';
-        AString_append(tmpParameterList, ','); /* terminate with ',' to flush last type and name */
-        for(tmp = 0; tmp < parameterListLength + 1; ++tmp) {
-            char current = AString_get(tmpParameterList, tmp);
-            if(typeFront) {
-                if(current != ',' && (isalnum(current) || ispunct(current))) {
-                    AString_append(typeString, current);
-                } else if(isspace(current) && strcmp(AString_buffer(typeString), "const") == 0) {
-                    AString_append(typeString, ' ');
-                } else if(current == '*' || current == '&') {
-                    AString_append(typeString, current);
-                    typeFront = false;
-                } else if(isspace(current) && !isspace(last) && AString_size(typeString) != 0) {
-                    typeFront = false;
-                }
-            } else {
-                if(current != ',' && (isalnum(current) || ispunct(current))) {
-                    AString_append(tmpString, current);
-                } else if(current == '*' || current == '&') {
-                    char typeStringLastChar = AString_get(typeString, AString_size(typeString) - 1);
-                    if(AString_size(tmpString) != 0 && typeStringLastChar != '*' && typeStringLastChar != '&')
-                        AString_append(typeString, ' ');
-                    AString_appendAString(typeString, tmpString);
-                    AString_append(typeString, current);
-                    AString_clear(tmpString);
-                } else if((isspace(current) || current == ',') && strcmp(AString_buffer(tmpString), "const") == 0) {
-                    AString_appendAString(typeString, tmpString);
-                    AString_clear(tmpString);
-                }
-                if(current == ',') {
-                    if(!firstRun) {
-                        AString_appendCString(tmpTypesString, ", ", 2);
-                        AString_appendCString(tmpNamesString, ", ", 2);
-                    }
-                    AString_appendAString(tmpTypesString, typeString);
-                    AString_appendAString(tmpNamesString, tmpString);
-                    AString_clear(typeString);
-                    AString_clear(tmpString);
-                    typeFront = true;
-                    firstRun = false;
-                    current = ' '; /* 'last' should be ' ' */
-                }
-            }
-            last = current;
-        }
-        tmp = AString_size(tmpTypesString);
-        char* types = (char*) malloc(sizeof(char) * (tmp + 1));
-        memcpy(types, AString_buffer(tmpTypesString), sizeof(char) * tmp);
-        types[tmp] = '\0';
-
-        tmp = AString_size(tmpNamesString);
-        char* names = (char*) malloc(sizeof(char) * (tmp + 1));
-        memcpy(names, AString_buffer(tmpNamesString), sizeof(char) * tmp);
-        names[tmp] = '\0';
-
-        AString_destruct(tmpParameterList);
-        AString_destruct(typeString);
-        AString_destruct(tmpString);
-        AString_destruct(tmpTypesString);
-        AString_destruct(tmpNamesString);
-
-        returnArray = (char**) malloc(sizeof(char*) * 2);
-        returnArray[0] = types;
-        returnArray[1] = names;
-        return returnArray;
     }
 
 PRIVATE_APLUGINSDK_CLOSE_PRIVATE_NAMESPACE
