@@ -6,7 +6,6 @@
 
 /* when pluginapi.cpp is compiled, all other source files should be compiled too */
 #include "../../private/src/infomanager.c"
-#include "../../private/src/signatureparser.c"
 
 APLUGINSDK_NO_EXPORT void* APLUGINLIBRARY_NAMESPACE APluginSDK_malloc(size_t size)
 {

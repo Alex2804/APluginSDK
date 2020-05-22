@@ -19,8 +19,6 @@ PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
             const char* featureName;
             const char* returnType;
             const char* parameterList;
-            char* parameterTypes;
-            char* parameterNames;
             void* functionPointer;
         };
 

@@ -12,7 +12,6 @@
 #include "../../libs/ACUtils/include/ACUtils/adynarray.h"
 
 #include "../privateplugininfos.h"
-#include "../signatureparser.h"
 
 #ifdef __cplusplus
 #   define PRIVATE_APLUGINSDK_STRUCT_NO_EXPORT APLUGINSDK_NO_EXPORT
@@ -52,12 +51,8 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
         if(infoManager == NULL)
             return;
         private_APluginSDK_destructPluginInfo(infoManager->pluginInfo);
-        for(i = 0; i < ADynArray_size(infoManager->featureInfos); ++i) {
-            struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* featureInfo = ADynArray_get(infoManager->featureInfos, i);
-            free(featureInfo->parameterTypes);
-            free(featureInfo->parameterNames);
-            free(featureInfo);
-        }
+        for(i = 0; i < ADynArray_size(infoManager->featureInfos); ++i)
+            free(ADynArray_get(infoManager->featureInfos, i));
         ADynArray_destruct(infoManager->featureInfos);
         for(i = 0; i < ADynArray_size(infoManager->classInfos); ++i)
             free(ADynArray_get(infoManager->classInfos, i));
@@ -196,10 +191,6 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
             info->featureName = featureName;
             info->returnType = returnType;
             info->parameterList = parameterList;
-            splittedParameterList = private_APluginSDK_splitParameterList(parameterList);
-            info->parameterTypes = splittedParameterList[0];
-            info->parameterNames = splittedParameterList[1];
-            free(splittedParameterList);
             info->functionPointer = functionPtr;
             ADynArray_append(infoManager->featureInfos, info);
         }
