@@ -1,4 +1,4 @@
-#include "check.h"
+#include "../include/ACUtilsTest/acheck.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -15,14 +15,14 @@ static void* private_ACUtilsTest_ADynArray_realloc(void *ptr, size_t size) {
         if(private_ACUtilsTest_ADynArray_reallocFail)
             --private_ACUtilsTest_ADynArray_reallocFailCounter;
         void* tmp = realloc(ptr, size);
-        if(tmp != NULL)
+        if(tmp != nullptr)
             ++private_ACUtilsTest_ADynArray_reallocCount;
         return tmp;
     }
-    return NULL;
+    return nullptr;
 }
 static void private_ACUtilsTest_ADynArray_free(void *ptr) {
-    if(ptr != NULL)
+    if(ptr != nullptr)
         ++private_ACUtilsTest_ADynArray_freeCount;
     free(ptr);
 }
@@ -49,10 +49,10 @@ START_TEST(test_ADynArray_construct_destruct_valid)
 {
     struct private_ACUtilsTest_ADynArray_CharArray *array;
     array = ADynArray_construct(struct private_ACUtilsTest_ADynArray_CharArray);
-    ck_assert_uint_eq(array->size, 0);
-    ck_assert_uint_eq(array->capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_nonnull(array->buffer);
-    ck_assert_ptr_nonnull(array->growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(array->size, 0);
+    ACUTILS_ASSERT_UINT_EQ(array->capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NONNULL(array->buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array->growStrategy);
     ADynArray_destruct(array);
 }
 END_TEST
@@ -62,12 +62,12 @@ START_TEST(test_ADynArray_construct_destruct_withAllocator_valid)
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = private_ACUtilsTest_ADynArray_freeCount = 0;
     array = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_CharArray, private_ACUtilsTest_ADynArray_realloc, private_ACUtilsTest_ADynArray_free);
-    ck_assert_uint_eq(array->size, 0);
-    ck_assert_uint_eq(array->capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_nonnull(array->buffer);
-    ck_assert_ptr_nonnull(array->growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(array->size, 0);
+    ACUTILS_ASSERT_UINT_EQ(array->capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NONNULL(array->buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array->growStrategy);
     ADynArray_destruct(array);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, private_ACUtilsTest_ADynArray_freeCount);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, private_ACUtilsTest_ADynArray_freeCount);
 }
 END_TEST
 START_TEST(test_ADynArray_construct_destruct_withAllocator_invalid)
@@ -75,10 +75,10 @@ START_TEST(test_ADynArray_construct_destruct_withAllocator_invalid)
     struct private_ACUtilsTest_ADynArray_CharArray *array;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = private_ACUtilsTest_ADynArray_freeCount = 0;
-    array = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_CharArray, NULL, private_ACUtilsTest_ADynArray_free);
-    ck_assert_ptr_null(array);
-    array = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_CharArray, private_ACUtilsTest_ADynArray_realloc, NULL);
-    ck_assert_ptr_null(array);
+    array = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_CharArray, nullptr, private_ACUtilsTest_ADynArray_free);
+    ACUTILS_ASSERT_PTR_NULL(array);
+    array = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_CharArray, private_ACUtilsTest_ADynArray_realloc, nullptr);
+    ACUTILS_ASSERT_PTR_NULL(array);
 }
 END_TEST
 START_TEST(test_ADynArray_construct_destruct_noMemoryAvailable)
@@ -89,99 +89,99 @@ START_TEST(test_ADynArray_construct_destruct_noMemoryAvailable)
     private_ACUtilsTest_ADynArray_reallocCount = private_ACUtilsTest_ADynArray_freeCount = 0;
     array = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_CharArray,
             private_ACUtilsTest_ADynArray_realloc, private_ACUtilsTest_ADynArray_free);
-    ck_assert_ptr_null(array);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_freeCount, 0);
+    ACUTILS_ASSERT_PTR_NULL(array);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_freeCount, 0);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 1;
     array = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_CharArray,
             private_ACUtilsTest_ADynArray_realloc, private_ACUtilsTest_ADynArray_free);
-    ck_assert_ptr_null(array);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_freeCount, 1);
+    ACUTILS_ASSERT_PTR_NULL(array);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_freeCount, 1);
 }
 END_TEST
 START_TEST(test_ADynArray_construct_destruct_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *array = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *array = nullptr;
     private_ACUtilsTest_ADynArray_freeCount = 0;
     ADynArray_destruct(array); /* should do nothing */
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_freeCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_freeCount, 0);
 }
 END_TEST
 
 
 START_TEST(test_ADynArray_setGrowStrategy)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = NULL, .deallocator = NULL};
+    struct private_ACUtilsTest_ADynArray_CharArray array = {nullptr, nullptr};
     array.capacity = 0;
-    array.buffer = NULL;
-    array.growStrategy = NULL;
+    array.buffer = nullptr;
+    array.growStrategy = nullptr;
     array.size = 42;
     ADynArray_setGrowStrategy(&array, private_ACUtilsTest_ADynArray_growStrategy);
-    ck_assert_ptr_eq(array.growStrategy, private_ACUtilsTest_ADynArray_growStrategy);
-    ADynArray_setGrowStrategy(&array, NULL);
-    ck_assert_ptr_null(array.growStrategy);
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    ACUTILS_ASSERT_PTR_EQ(array.growStrategy, private_ACUtilsTest_ADynArray_growStrategy);
+    ADynArray_setGrowStrategy(&array, nullptr);
+    ACUTILS_ASSERT_PTR_NULL(array.growStrategy);
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     ADynArray_setGrowStrategy(arrayPtr, private_ACUtilsTest_ADynArray_growStrategy);
 }
 
 
 START_TEST(test_ADynArray_size_valid)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = NULL, .deallocator = NULL};
+    struct private_ACUtilsTest_ADynArray_CharArray array = {nullptr, nullptr};
     array.capacity = 0;
-    array.buffer = NULL;
-    array.growStrategy = NULL;
+    array.buffer = nullptr;
+    array.growStrategy = nullptr;
     array.size = 42;
-    ck_assert_uint_eq(ADynArray_size(&array), 42);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(&array), 42);
     array.size = 13;
-    ck_assert_uint_eq(ADynArray_size(&array), 13);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(&array), 13);
     array.size = 0;
-    ck_assert_uint_eq(ADynArray_size(&array), 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(&array), 0);
 }
 START_TEST(test_ADynArray_size_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
-    ck_assert_uint_eq(ADynArray_size(arrayPtr), 0);
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(arrayPtr), 0);
 }
 
 
 START_TEST(test_ADynArray_capacity_valid)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = NULL, .deallocator = NULL};
+    struct private_ACUtilsTest_ADynArray_CharArray array = {nullptr, nullptr};
     array.size = 0;
-    array.buffer = NULL;
-    array.growStrategy = NULL;
+    array.buffer = nullptr;
+    array.growStrategy = nullptr;
     array.capacity = 42;
-    ck_assert_uint_eq(ADynArray_capacity(&array), 42);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(&array), 42);
     array.capacity = 13;
-    ck_assert_uint_eq(ADynArray_capacity(&array), 13);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(&array), 13);
     array.capacity = 0;
-    ck_assert_uint_eq(ADynArray_capacity(&array), 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(&array), 0);
 }
 START_TEST(test_ADynArray_capacity_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
-    ck_assert_uint_eq(ADynArray_capacity(arrayPtr), 0);
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(arrayPtr), 0);
 }
 
 
 START_TEST(test_ADynArray_buffer_valid)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = NULL, .deallocator = NULL};
+    struct private_ACUtilsTest_ADynArray_CharArray array = {nullptr, nullptr};
     array.size = 0;
     array.capacity = 0;
     array.buffer = (char*) 42;
-    ck_assert_ptr_eq(ADynArray_buffer(&array), (char*) 42);
+    ACUTILS_ASSERT_PTR_EQ(ADynArray_buffer(&array), (char*) 42);
     array.buffer = (char*) 13;
-    ck_assert_ptr_eq(ADynArray_buffer(&array), (char*) 13);
-    array.buffer = NULL;
-    ck_assert_ptr_null(ADynArray_buffer(&array));
+    ACUTILS_ASSERT_PTR_EQ(ADynArray_buffer(&array), (char*) 13);
+    array.buffer = nullptr;
+    ACUTILS_ASSERT_PTR_NULL(ADynArray_buffer(&array));
 }
 START_TEST(test_ADynArray_buffer_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *array = NULL;
-    ck_assert_ptr_null(ADynArray_buffer(array));
+    struct private_ACUtilsTest_ADynArray_CharArray *array = nullptr;
+    ACUTILS_ASSERT_PTR_NULL(ADynArray_buffer(array));
 }
 
 
@@ -190,23 +190,23 @@ START_TEST(test_ADynArray_reserve_success_enoughCapacityBufferNotNull)
     size_t i;
     struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
     array.size = private_ACUtilsTest_ADynArray_capacityMin;
-    array.growStrategy = NULL;
+    array.growStrategy = nullptr;
     array.capacity = private_ACUtilsTest_ADynArray_capacityMin;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
-    ck_assert_uint_eq(ADynArray_reserve(&array, array.capacity), true);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_reserve(&array, array.capacity), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 1; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
-    ck_assert_ptr_null(array.growStrategy);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
+    ACUTILS_ASSERT_PTR_NULL(array.growStrategy);
     array.deallocator(array.buffer);
 }
 START_TEST(test_ADynArray_reserve_success_enoughCapacityBufferNull)
@@ -215,15 +215,15 @@ START_TEST(test_ADynArray_reserve_success_enoughCapacityBufferNull)
     array.size = 0;
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = private_ACUtilsTest_ADynArray_capacityMin;
-    array.buffer = NULL;
+    array.buffer = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_reserve(&array, array.capacity), true);
-    ck_assert_uint_eq(array.size, 0);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_reserve(&array, array.capacity), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 0);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -235,20 +235,20 @@ START_TEST(test_ADynArray_reserve_success_notEnoughCapacity)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = private_ACUtilsTest_ADynArray_capacityMin;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_reserve(&array, private_ACUtilsTest_ADynArray_capacityMax), true);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMax);
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_reserve(&array, private_ACUtilsTest_ADynArray_capacityMax), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMax);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 1; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -260,20 +260,20 @@ START_TEST(test_ADynArray_reserve_failure_biggerThanMaxCapacity)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = private_ACUtilsTest_ADynArray_capacityMin;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_reserve(&array, private_ACUtilsTest_ADynArray_capacityMax + 1), false);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_reserve(&array, private_ACUtilsTest_ADynArray_capacityMax + 1), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 1; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -285,20 +285,20 @@ START_TEST(test_ADynArray_reserve_failure_noMemoryAvailable)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = private_ACUtilsTest_ADynArray_capacityMin;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
-    ck_assert_uint_eq(ADynArray_reserve(&array, private_ACUtilsTest_ADynArray_capacityMax), false);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_reserve(&array, private_ACUtilsTest_ADynArray_capacityMax), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 1; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
-    ck_assert_ptr_nonnull(array.growStrategy);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -307,33 +307,33 @@ START_TEST(test_ADynArray_reserve_failure_growStrategyNull)
     size_t i;
     struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
     array.size = private_ACUtilsTest_ADynArray_capacityMin;
-    array.growStrategy = NULL;
+    array.growStrategy = nullptr;
     array.capacity = private_ACUtilsTest_ADynArray_capacityMin;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_reserve(&array, private_ACUtilsTest_ADynArray_capacityMax + 5), true);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMax + 5);
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_reserve(&array, private_ACUtilsTest_ADynArray_capacityMax + 5), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMax + 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 1; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
-    ck_assert_ptr_null(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 1], '0');
+    ACUTILS_ASSERT_PTR_NULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_reserve_failure_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_reserve(arrayPtr, private_ACUtilsTest_ADynArray_capacityMax), false);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_reserve(arrayPtr, private_ACUtilsTest_ADynArray_capacityMax), false);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -345,22 +345,22 @@ START_TEST(test_ADynArray_shrinkToFit_success_hasLeastCapacityBufferNotNull)
     array.size = private_ACUtilsTest_ADynArray_capacityMin - 1;
     array.capacity = private_ACUtilsTest_ADynArray_capacityMin;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_shrinkToFit(&array), true);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_shrinkToFit(&array), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 2; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 2], '0');
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 2], '0');
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 START_TEST(test_ADynArray_shrinkToFit_success_hasLeastCapacityBufferNull)
@@ -368,16 +368,16 @@ START_TEST(test_ADynArray_shrinkToFit_success_hasLeastCapacityBufferNull)
     struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
     array.size = private_ACUtilsTest_ADynArray_capacityMin - 1;
     array.capacity = private_ACUtilsTest_ADynArray_capacityMin;
-    array.buffer = NULL;
+    array.buffer = nullptr;
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_shrinkToFit(&array), true);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_null(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_shrinkToFit(&array), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -388,21 +388,21 @@ START_TEST(test_ADynArray_shrinkToFit_success_hasNotLeastCapacity)
     array.size = private_ACUtilsTest_ADynArray_capacityMin - 1;
     array.capacity = private_ACUtilsTest_ADynArray_growStrategy(private_ACUtilsTest_ADynArray_capacityMin + 1, sizeof(char));
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_shrinkToFit(&array), true);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_shrinkToFit(&array), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_capacityMin);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 2; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 2], '0');
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 2], '0');
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -413,21 +413,21 @@ START_TEST(test_ADynArray_shrinkToFit_failure_noMemoryAvailable)
     array.size = private_ACUtilsTest_ADynArray_capacityMin - 1;
     array.capacity = private_ACUtilsTest_ADynArray_growStrategy(private_ACUtilsTest_ADynArray_capacityMin + 1, sizeof(char));
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
-    ck_assert_uint_eq(ADynArray_shrinkToFit(&array), false);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_growStrategy(private_ACUtilsTest_ADynArray_capacityMin + 1, sizeof(char)));
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_shrinkToFit(&array), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_growStrategy(private_ACUtilsTest_ADynArray_capacityMin + 1, sizeof(char)));
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 2; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 2], '0');
-    ck_assert_ptr_nonnull(array.growStrategy);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 2], '0');
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -438,31 +438,31 @@ START_TEST(test_ADynArray_shrinkToFit_failure_growStrategyNull)
     array.size = private_ACUtilsTest_ADynArray_capacityMin - 1;
     array.capacity = private_ACUtilsTest_ADynArray_growStrategy(private_ACUtilsTest_ADynArray_capacityMin + 1, sizeof(char));
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     for(i = 0; i < array.size - 1; ++i)
         array.buffer[i] = '5';
     array.buffer[array.size - 1] = '0';
-    array.growStrategy = NULL;
+    array.growStrategy = nullptr;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_shrinkToFit(&array), false);
-    ck_assert_uint_eq(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_growStrategy(private_ACUtilsTest_ADynArray_capacityMin + 1, sizeof(char)));
-    ck_assert_ptr_nonnull(array.buffer);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_shrinkToFit(&array), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, private_ACUtilsTest_ADynArray_capacityMin - 1);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, private_ACUtilsTest_ADynArray_growStrategy(private_ACUtilsTest_ADynArray_capacityMin + 1, sizeof(char)));
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
     for(i = 0; i < private_ACUtilsTest_ADynArray_capacityMin - 2; ++i)
-        ck_assert_int_eq(array.buffer[i], '5');
-    ck_assert_int_eq(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 2], '0');
-    ck_assert_ptr_null(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+        ACUTILS_ASSERT_INT_EQ(array.buffer[i], '5');
+    ACUTILS_ASSERT_INT_EQ(array.buffer[private_ACUtilsTest_ADynArray_capacityMin - 2], '0');
+    ACUTILS_ASSERT_PTR_NULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_shrinkToFit_failure_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_shrinkToFit(arrayPtr), false);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_shrinkToFit(arrayPtr), false);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -471,27 +471,27 @@ START_TEST(test_ADynArray_clear)
 {
     struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
     array.size = private_ACUtilsTest_ADynArray_capacityMin + 1;
-    array.growStrategy = NULL;
+    array.growStrategy = nullptr;
     array.capacity = (size_t) (private_ACUtilsTest_ADynArray_capacityMin * private_ACUtilsTest_ADynArray_capacityMul);
-    array.buffer = NULL;
+    array.buffer = nullptr;
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     ADynArray_clear(&array);
-    ck_assert_uint_eq(array.size, 0);
-    ck_assert_uint_eq(array.capacity, private_ACUtilsTest_ADynArray_capacityMin * private_ACUtilsTest_ADynArray_capacityMul);
-    ck_assert_ptr_null(array.buffer);
-    ck_assert_ptr_null(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 0);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, (size_t) (private_ACUtilsTest_ADynArray_capacityMin * private_ACUtilsTest_ADynArray_capacityMul));
+    ACUTILS_ASSERT_PTR_NULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 START_TEST(test_ADynArray_clear_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     ADynArray_clear(arrayPtr);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -503,16 +503,16 @@ START_TEST(test_ADynArray_remove_indexRangeInBounds)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 16;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0123456789", 11);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     ADynArray_remove(&array, 2, 6);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 16);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0189");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 16);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0189");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -523,15 +523,15 @@ START_TEST(test_ADynArray_remove_rangeBeyondBounds)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 16;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0123456789", 11);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     ADynArray_remove(&array, 2, 100);
-    ck_assert_uint_eq(array.size, 2);
-    ck_assert_uint_eq(array.capacity, 16);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 2);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 16);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -542,16 +542,16 @@ START_TEST(test_ADynArray_remove_zeroRange)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 16;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0123456789", 11);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     ADynArray_remove(&array, 2, 0);
-    ck_assert_uint_eq(array.size, 11);
-    ck_assert_uint_eq(array.capacity, 16);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456789");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 11);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 16);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456789");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -562,26 +562,26 @@ START_TEST(test_ADynArray_remove_indexBeyoundBounds)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 16;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0123456789", 11);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     ADynArray_remove(&array, 13, 5);
-    ck_assert_uint_eq(array.size, 11);
-    ck_assert_uint_eq(array.capacity, 16);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456789");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 11);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 16);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456789");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_remove_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     ADynArray_remove(arrayPtr, 5, 10);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -593,18 +593,18 @@ START_TEST(test_ADynArray_insert_success_zeroIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "1234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '0';
-    ck_assert_uint_eq(ADynArray_insert(&array, 0, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_int_eq(array.buffer[0], '0');
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(&array, 0, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_INT_EQ(array.buffer[0], '0');
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -615,18 +615,18 @@ START_TEST(test_ADynArray_insert_success_middleIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0134", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '2';
-    ck_assert_uint_eq(ADynArray_insert(&array, 2, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_int_eq(array.buffer[2], '2');
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(&array, 2, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_INT_EQ(array.buffer[2], '2');
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -637,18 +637,18 @@ START_TEST(test_ADynArray_insert_success_endIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '\0';
-    ck_assert_uint_eq(ADynArray_insert(&array, 5, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_int_eq(array.buffer[5], '\0');
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(&array, 5, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_INT_EQ(array.buffer[5], '\0');
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -659,18 +659,18 @@ START_TEST(test_ADynArray_insert_success_beyondEndIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '\0';
-    ck_assert_uint_eq(ADynArray_insert(&array, 666, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_int_eq(array.buffer[5], '\0');
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(&array, 666, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_INT_EQ(array.buffer[5], '\0');
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -681,18 +681,18 @@ START_TEST(test_ADynArray_insert_success_bufferExpanded)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0134", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '2';
-    ck_assert_uint_eq(ADynArray_insert(&array, 2, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_int_eq(array.buffer[2], '2');
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(&array, 2, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_INT_EQ(array.buffer[2], '2');
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -703,17 +703,17 @@ START_TEST(test_ADynArray_insert_success_negativeIndexGetsMaxIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '\0';
-    ck_assert_uint_eq(ADynArray_insert(&array, -1, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(&array, -1, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -724,28 +724,28 @@ START_TEST(test_ADynArray_insert_failure_bufferExpansionFailed)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0134", 5);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
     char c = '2';
-    ck_assert_uint_eq(ADynArray_insert(&array, 2, c), false);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 5);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0134");
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(&array, 2, c), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0134");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_insert_failure_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '0';
-    ck_assert_uint_eq(ADynArray_insert(arrayPtr, 0, c), false);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(arrayPtr, 0, c), false);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -757,16 +757,16 @@ START_TEST(test_ADynArray_insertArray_success_zeroIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "3456", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 0, "012", 3), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 0, "012", 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -777,16 +777,16 @@ START_TEST(test_ADynArray_insertArray_success_middleIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0156", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 2, "234", 3), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 2, "234", 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -797,16 +797,16 @@ START_TEST(test_ADynArray_insertArray_success_endIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 5, "56\0", 3), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 5, "56\0", 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -817,16 +817,16 @@ START_TEST(test_ADynArray_insertArray_success_beyondEndIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 666, "56\0", 3), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 666, "56\0", 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -837,37 +837,37 @@ START_TEST(test_ADynArray_insertArray_success_bufferExpanded)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0156", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 2, "234", 3), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 2, "234", 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_insertArray_success_nullptrArray)
 {
     struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
-    char *nullptrArray = NULL;
+    char *nullptrArray = nullptr;
     array.size = 5;
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0156", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 2, nullptrArray, 3), true);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 5);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0156");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 2, nullptrArray, 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -878,16 +878,16 @@ START_TEST(test_ADynArray_insertArray_success_zeroArraySize)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0156", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 2, "234", 0), true);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 5);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0156");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 2, "234", 0), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -898,16 +898,16 @@ START_TEST(test_ADynArray_insertArray_success_negativeIndexGetsMaxIndex)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, -1, "56\0", 3), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, -1, "56\0", 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -918,26 +918,26 @@ START_TEST(test_ADynArray_insertArray_failure_bufferExpansionFailed)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0156", 5);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 2, "234", 3), false);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 5);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0156");
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 2, "234", 3), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_insertArray_failure_nullptrDestArray)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(arrayPtr, 0, "012", 3), false);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(arrayPtr, 0, "012", 3), false);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -950,26 +950,26 @@ START_TEST(test_ADynArray_insertADynArray_success_zeroIndex)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "3456", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "012\0", 4);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, 0, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 8);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123456");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "012");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, 0, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "012");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -982,26 +982,26 @@ START_TEST(test_ADynArray_insertADynArray_success_middleIndex)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "0156", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "234\0", 4);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, 2, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 8);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123456");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "234");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, 2, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "234");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1014,26 +1014,26 @@ START_TEST(test_ADynArray_insertADynArray_success_endIndex)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "01234", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "56\0", 4);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, 5, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 8);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123456");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "56");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, 5, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "56");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1046,26 +1046,26 @@ START_TEST(test_ADynArray_insertADynArray_success_beyondEndIndex)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "01234", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "56", 3);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, 666, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 8);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123456");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "56");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, 666, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "56");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1078,26 +1078,26 @@ START_TEST(test_ADynArray_insertADynArray_success_bufferExpanded)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "0156", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "234", 4);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, 2, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 8);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123456");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "234");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, 2, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "234");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1105,21 +1105,21 @@ END_TEST
 START_TEST(test_ADynArray_insertADynArray_success_nullptrSrcArray)
 {
     struct private_ACUtilsTest_ADynArray_CharArray destArray = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
-    struct private_ACUtilsTest_ADynArray_CharArray *srcArray = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *srcArray = nullptr;
     destArray.size = 5;
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "0156", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, 2, srcArray), true);
-    ck_assert_uint_eq(destArray.size, 5);
-    ck_assert_uint_eq(destArray.capacity, 5);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0156");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, 2, srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
 }
 END_TEST
@@ -1131,24 +1131,24 @@ START_TEST(test_ADynArray_insertADynArray_success_zeroSizeSrcArray)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "0156", 5);
     srcArray.size = 0;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, 2, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 5);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0156");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 0);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, 2, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 0);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1161,26 +1161,26 @@ START_TEST(test_ADynArray_insertADynArray_success_negativeIndexGetsMaxIndex)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "01234", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "56", 3);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, -1, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 8);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123456");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "56");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, -1, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "56");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1193,26 +1193,26 @@ START_TEST(test_ADynArray_insertADynArray_failure_bufferExpansionFailed)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "0156", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "234", 4);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
-    ck_assert_uint_eq(ADynArray_insertADynArray(&destArray, 2, &srcArray), false);
-    ck_assert_uint_eq(destArray.size, 5);
-    ck_assert_uint_eq(destArray.capacity, 5);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0156");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "234");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(&destArray, 2, &srcArray), false);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "234");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1220,21 +1220,21 @@ END_TEST
 START_TEST(test_ADynArray_insertADynArray_failure_nullptrDestArray)
 {
     struct private_ACUtilsTest_ADynArray_CharArray srcArray = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
-    struct private_ACUtilsTest_ADynArray_CharArray *destArrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *destArrayPtr = nullptr;
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "012", 4);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertADynArray(destArrayPtr, 0, &srcArray), false);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "012");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(destArrayPtr, 0, &srcArray), false);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "012");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     srcArray.deallocator(srcArray.buffer);
 }
 END_TEST
@@ -1247,18 +1247,18 @@ START_TEST(test_ADynArray_append_success_enoughCapacity)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '\0';
-    ck_assert_uint_eq(ADynArray_append(&array, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_int_eq(array.buffer[array.size - 1], '\0');
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_append(&array, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_INT_EQ(array.buffer[array.size - 1], '\0');
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1269,18 +1269,18 @@ START_TEST(test_ADynArray_append_success_notEnoughCapacity)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '\0';
-    ck_assert_uint_eq(ADynArray_append(&array, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_int_eq(array.buffer[array.size - 1], '\0');
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_append(&array, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_INT_EQ(array.buffer[array.size - 1], '\0');
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1291,28 +1291,28 @@ START_TEST(test_ADynArray_append_failure_bufferExpansionFailed)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity + 1);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity + 1);
     memcpy(array.buffer, "01234", 6);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
     char c = '\0';
-    ck_assert_uint_eq(ADynArray_append(&array, c), false);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 5);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "01234");
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_append(&array, c), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01234");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_append_failure_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '\0';
-    ck_assert_uint_eq(ADynArray_append(arrayPtr, c), false);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_append(arrayPtr, c), false);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -1324,16 +1324,16 @@ START_TEST(test_ADynArray_appendArray_success_enoughCapacity)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendArray(&array, "56\0", 3), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendArray(&array, "56\0", 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1344,37 +1344,37 @@ START_TEST(test_ADynArray_appendArray_success_notEnoughCapacity)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "01234", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendArray(&array, "56\0", 3), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123456");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendArray(&array, "56\0", 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_appendArray_success_nullptrArray)
 {
     struct private_ACUtilsTest_ADynArray_CharArray array = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
-    char *nullptrArray = NULL;
+    char *nullptrArray = nullptr;
     array.size = 5;
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0156", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendArray(&array, nullptrArray, 3), true);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 5);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0156");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendArray(&array, nullptrArray, 3), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1385,16 +1385,16 @@ START_TEST(test_ADynArray_appendArray_success_zeroArraySize)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0156", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendArray(&array, "234", 0), true);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 5);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0156");
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendArray(&array, "234", 0), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1405,26 +1405,26 @@ START_TEST(test_ADynArray_appendArray_failure_bufferExpansionFailed)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "0123", 5);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
-    ck_assert_uint_eq(ADynArray_insertArray(&array, 2, "45\0", 3), false);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 5);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_str_eq(array.buffer, "0123");
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(&array, 2, "45\0", 3), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123");
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_appendArray_failure_nullptrDestArray)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_insertArray(arrayPtr, 0, "012", 3), false);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(arrayPtr, 0, "012", 3), false);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -1437,26 +1437,26 @@ START_TEST(test_ADynArray_appendADynArray_success_enoughCapacity)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "01234", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "56", 3);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendADynArray(&destArray, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 8);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123456");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "56");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendADynArray(&destArray, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "56");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1469,26 +1469,26 @@ START_TEST(test_ADynArray_appendADynArray_success_notEnoughCapacity)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "01234", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "56", 3);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendADynArray(&destArray, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 8);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123456");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "56");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendADynArray(&destArray, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123456");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "56");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1496,21 +1496,21 @@ END_TEST
 START_TEST(test_ADynArray_appendADynArray_success_nullptrSrcArray)
 {
     struct private_ACUtilsTest_ADynArray_CharArray destArray = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
-    struct private_ACUtilsTest_ADynArray_CharArray *srcArray = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *srcArray = nullptr;
     destArray.size = 5;
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "0123", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendADynArray(&destArray, srcArray), true);
-    ck_assert_uint_eq(destArray.size, 5);
-    ck_assert_uint_eq(destArray.capacity, 5);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendADynArray(&destArray, srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
 }
 END_TEST
@@ -1522,24 +1522,24 @@ START_TEST(test_ADynArray_appendADynArray_success_zeroSizeSrcArray)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "0123", 5);
     srcArray.size = 0;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendADynArray(&destArray, &srcArray), true);
-    ck_assert_uint_eq(destArray.size, 5);
-    ck_assert_uint_eq(destArray.capacity, 8);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0123");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 0);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendADynArray(&destArray, &srcArray), true);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0123");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 0);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1552,26 +1552,26 @@ START_TEST(test_ADynArray_appendADynArray_failure_bufferExpansionFailed)
     destArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     destArray.capacity = 5;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    destArray.buffer = destArray.reallocator(NULL, destArray.capacity);
+    destArray.buffer = (char*) destArray.reallocator(nullptr, destArray.capacity);
     memcpy(destArray.buffer, "0156", 5);
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "234", 4);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
-    ck_assert_uint_eq(ADynArray_appendADynArray(&destArray, &srcArray), false);
-    ck_assert_uint_eq(destArray.size, 5);
-    ck_assert_uint_eq(destArray.capacity, 5);
-    ck_assert_ptr_nonnull(destArray.buffer);
-    ck_assert_str_eq(destArray.buffer, "0156");
-    ck_assert_ptr_nonnull(destArray.growStrategy);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "234");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendADynArray(&destArray, &srcArray), false);
+    ACUTILS_ASSERT_UINT_EQ(destArray.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(destArray.capacity, 5);
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(destArray.buffer, "0156");
+    ACUTILS_ASSERT_PTR_NONNULL(destArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "234");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
     destArray.deallocator(destArray.buffer);
     srcArray.deallocator(srcArray.buffer);
 }
@@ -1579,21 +1579,21 @@ END_TEST
 START_TEST(test_ADynArray_appendADynArray_failure_nullptrDestArray)
 {
     struct private_ACUtilsTest_ADynArray_CharArray srcArray = {.reallocator = private_ACUtilsTest_ADynArray_realloc, .deallocator = private_ACUtilsTest_ADynArray_free};
-    struct private_ACUtilsTest_ADynArray_CharArray *destArrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *destArrayPtr = nullptr;
     srcArray.size = 3;
     srcArray.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     srcArray.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    srcArray.buffer = srcArray.reallocator(NULL, srcArray.capacity);
+    srcArray.buffer = (char*) srcArray.reallocator(nullptr, srcArray.capacity);
     memcpy(srcArray.buffer, "012", 4);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
-    ck_assert_uint_eq(ADynArray_appendADynArray(destArrayPtr, &srcArray), false);
-    ck_assert_uint_eq(srcArray.size, 3);
-    ck_assert_uint_eq(srcArray.capacity, 8);
-    ck_assert_ptr_nonnull(srcArray.buffer);
-    ck_assert_str_eq(srcArray.buffer, "012");
-    ck_assert_ptr_nonnull(srcArray.growStrategy);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_appendADynArray(destArrayPtr, &srcArray), false);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(srcArray.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.buffer);
+    ACUTILS_ASSERT_STR_EQ(srcArray.buffer, "012");
+    ACUTILS_ASSERT_PTR_NONNULL(srcArray.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     srcArray.deallocator(srcArray.buffer);
 }
 END_TEST
@@ -1606,33 +1606,33 @@ START_TEST(test_ADynArray_set_success_indexInBounds)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 4;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "012", 4);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '2';
-    ck_assert_uint_eq(ADynArray_set(&array, 0, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "212");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_set(&array, 0, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "212");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     c = '1';
-    ck_assert_uint_eq(ADynArray_set(&array, 1, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "212");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_set(&array, 1, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "212");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     c = '0';
-    ck_assert_uint_eq(ADynArray_set(&array, 2, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "210");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_set(&array, 2, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "210");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1643,19 +1643,19 @@ START_TEST(test_ADynArray_set_success_indexBeyondSize)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 4;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity + 1);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity + 1);
     memcpy(array.buffer, "012\0\0", 5);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '3';
-    ck_assert_uint_eq(ADynArray_set(&array, 3, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "0123");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_set(&array, 3, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1666,17 +1666,17 @@ START_TEST(test_ADynArray_set_success_indexBeyondSize_bufferExpanded)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 3;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity + 2);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity + 2);
     memcpy(array.buffer, "012\0\0", 5);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '3';
-    ck_assert_uint_eq(ADynArray_set(&array, 3, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "0123");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_set(&array, 3, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1687,28 +1687,28 @@ START_TEST(test_ADynArray_set_failure_indexBeyondSize_bufferExpansionFailed)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 3;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity + 1);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity + 1);
     memcpy(array.buffer, "012", 4);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
     char c = '3';
-    ck_assert_uint_eq(ADynArray_set(&array, 3, c), false);
-    ck_assert_uint_eq(array.size, 3);
-    ck_assert_uint_eq(array.capacity, 3);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "012");
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_set(&array, 3, c), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 3);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "012");
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_set_failure_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '0';
-    ck_assert_uint_eq(ADynArray_set(arrayPtr, 0, c), false);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_set(arrayPtr, 0, c), false);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -1720,33 +1720,33 @@ START_TEST(test_ADynArray_setRange_success_indexAndRangeInBounds)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 4;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "012", 4);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '3';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 0, 2, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "332");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 0, 2, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "332");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     c = '1';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 1, 2, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "311");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 1, 2, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "311");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     c = '0';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 2, 1, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
-    ck_assert_str_eq(array.buffer, "310");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 2, 1, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "310");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1757,27 +1757,27 @@ START_TEST(test_ADynArray_setRange_success_indexInBoundsRangeBeyondSize)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 8;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "012", 3);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '5';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 2, 2, c), true);
-    ck_assert_uint_eq(array.size, 4);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 2, 2, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 4);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "0155");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0155");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     c = '1';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 2, 4, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 2, 4, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "011111");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "011111");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1788,27 +1788,27 @@ START_TEST(test_ADynArray_setRange_success_indexInBoundsRangeBeyondSize_bufferEx
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 3;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "012", array.capacity);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '4';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 2, 3, c), true);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 2, 3, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "01444");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01444");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     c = '9';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 3, 8, c), true);
-    ck_assert_uint_eq(array.size, 11);
-    ck_assert_uint_eq(array.capacity, 16);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 3, 8, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 11);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 16);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "01499999999");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 2);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01499999999");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 2);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1819,29 +1819,29 @@ START_TEST(test_ADynArray_setRange_success_indexAndRangeBeyondSize)
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 16;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "012", 3);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '3';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 3, 2, c), true);
-    ck_assert_uint_eq(array.size, 5);
-    ck_assert_uint_eq(array.capacity, 16);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 3, 2, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 5);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 16);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "01233");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01233");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     c = '6';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 2342, 3, c), true);
-    ck_assert_uint_eq(array.size, 8);
-    ck_assert_uint_eq(array.capacity, 16);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 2342, 3, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 8);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 16);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "01233666");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "01233666");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1852,36 +1852,36 @@ START_TEST(test_ADynArray_setRange_success_indexAndRangeBeyondSize_bufferExpande
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 3;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "012", 3);
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '3';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 2343, 3, c), true);
-    ck_assert_uint_eq(array.size, 6);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 2343, 3, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 6);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "012333");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "012333");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     c = '7';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 2343, 1, c), true);
-    ck_assert_uint_eq(array.size, 7);
-    ck_assert_uint_eq(array.capacity, 8);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 2343, 1, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 7);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 8);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "0123337");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 1);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "0123337");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 1);
     c = '5';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 8, 5, c), true);
-    ck_assert_uint_eq(array.size, 12);
-    ck_assert_uint_eq(array.capacity, 16);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 8, 5, c), true);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 12);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 16);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "012333755555");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 2);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "012333755555");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 2);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1892,20 +1892,20 @@ START_TEST(test_ADynArray_setRange_failure_indexInBoundsRangeBeyondSize_bufferEx
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 4;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "012", 3);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '4';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 1, 4, c), false);
-    ck_assert_uint_eq(array.size, 3);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 1, 4, c), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "012");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "012");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
@@ -1916,31 +1916,31 @@ START_TEST(test_ADynArray_setRange_failure_indexAndRangeBeyondSize_bufferExpansi
     array.growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
     array.capacity = 4;
     private_ACUtilsTest_ADynArray_reallocFail = false;
-    array.buffer = array.reallocator(NULL, array.capacity);
+    array.buffer = (char*) array.reallocator(nullptr, array.capacity);
     memcpy(array.buffer, "012", 3);
     private_ACUtilsTest_ADynArray_reallocFailCounter = 0;
     private_ACUtilsTest_ADynArray_reallocFail = true;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '4';
-    ck_assert_uint_eq(ADynArray_setRange(&array, 23234, 2, c), false);
-    ck_assert_uint_eq(array.size, 3);
-    ck_assert_uint_eq(array.capacity, 4);
-    ck_assert_ptr_nonnull(array.buffer);
-    ck_assert_ptr_nonnull(array.growStrategy);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(&array, 23234, 2, c), false);
+    ACUTILS_ASSERT_UINT_EQ(array.size, 3);
+    ACUTILS_ASSERT_UINT_EQ(array.capacity, 4);
+    ACUTILS_ASSERT_PTR_NONNULL(array.buffer);
+    ACUTILS_ASSERT_PTR_NONNULL(array.growStrategy);
     array.buffer[array.size] = '\0';
-    ck_assert_str_eq(array.buffer, "012");
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_STR_EQ(array.buffer, "012");
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
     array.deallocator(array.buffer);
 }
 END_TEST
 START_TEST(test_ADynArray_setRange_failure_nullptr)
 {
-    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = NULL;
+    struct private_ACUtilsTest_ADynArray_CharArray *arrayPtr = nullptr;
     private_ACUtilsTest_ADynArray_reallocFail = false;
     private_ACUtilsTest_ADynArray_reallocCount = 0;
     char c = '0';
-    ck_assert_uint_eq(ADynArray_setRange(arrayPtr, 0, 0, c), false);
-    ck_assert_uint_eq(private_ACUtilsTest_ADynArray_reallocCount, 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_setRange(arrayPtr, 0, 0, c), false);
+    ACUTILS_ASSERT_UINT_EQ(private_ACUtilsTest_ADynArray_reallocCount, 0);
 }
 END_TEST
 
@@ -1961,44 +1961,44 @@ START_TEST(test_ADynArray_mixedWithStruct)
     tmpArray[8] = (struct private_ACUtilsTest_ADynArray_PointStruct) {.x = 8.1, .y = 8.2};
     dynArray = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_PointArray, private_ACUtilsTest_ADynArray_realloc, private_ACUtilsTest_ADynArray_free);
     dynArray->growStrategy = private_ACUtilsTest_ADynArray_growStrategy;
-    ck_assert_uint_eq(ADynArray_size(dynArray), 0);
-    ck_assert_uint_eq(ADynArray_shrinkToFit(dynArray), true);
-    ck_assert_uint_eq(ADynArray_size(dynArray), 0);
-    ck_assert_uint_eq(ADynArray_capacity(dynArray), 8);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_shrinkToFit(dynArray), true);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(dynArray), 8);
     tmpDynArray = ADynArray_constructWithAllocator(struct private_ACUtilsTest_ADynArray_PointArray, private_ACUtilsTest_ADynArray_realloc, private_ACUtilsTest_ADynArray_free);
     ADynArray_appendArray(tmpDynArray, tmpArray + 6, 3);
-    ck_assert_uint_eq(ADynArray_size(tmpDynArray), 3);
-    ck_assert_uint_eq(ADynArray_capacity(tmpDynArray), 8);
-    ck_assert_uint_eq(ADynArray_insertADynArray(dynArray, 0, tmpDynArray), true);
-    ck_assert_uint_eq(ADynArray_size(dynArray), 3);
-    ck_assert_uint_eq(ADynArray_capacity(dynArray), 8);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(tmpDynArray), 3);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(tmpDynArray), 8);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertADynArray(dynArray, 0, tmpDynArray), true);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 3);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(dynArray), 8);
     ADynArray_destruct(tmpDynArray);
-    ck_assert_uint_eq(ADynArray_insert(dynArray, 0, tmpArray[5]), true);
-    ck_assert_uint_eq(ADynArray_size(dynArray), 4);
-    ck_assert_uint_eq(ADynArray_capacity(dynArray), 8);
-    ck_assert_uint_eq(ADynArray_insert(dynArray, 0, tmpArray[4]), true);
-    ck_assert_uint_eq(ADynArray_size(dynArray), 5);
-    ck_assert_uint_eq(ADynArray_capacity(dynArray), 8);
-    ck_assert_uint_eq(ADynArray_insert(dynArray, 0, tmpArray[3]), true);
-    ck_assert_uint_eq(ADynArray_size(dynArray), 6);
-    ck_assert_uint_eq(ADynArray_capacity(dynArray), 8);
-    ck_assert_uint_eq(ADynArray_insertArray(dynArray, 0, tmpArray, 3), true);
-    ck_assert_uint_eq(ADynArray_size(dynArray), 9);
-    ck_assert_uint_eq(ADynArray_capacity(dynArray), 16);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(dynArray, 0, tmpArray[5]), true);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 4);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(dynArray), 8);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(dynArray, 0, tmpArray[4]), true);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 5);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(dynArray), 8);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insert(dynArray, 0, tmpArray[3]), true);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 6);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(dynArray), 8);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_insertArray(dynArray, 0, tmpArray, 3), true);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 9);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(dynArray), 16);
     for(i = 0; i < ADynArray_size(dynArray); ++i) {
-        ck_assert_double_eq(ADynArray_get(dynArray, i).x, tmpArray[i].x);
-        ck_assert_double_eq(ADynArray_get(dynArray, i).y, tmpArray[i].y);
+        ACUTILS_ASSERT_DOUBLE_EQ(ADynArray_get(dynArray, i).x, tmpArray[i].x);
+        ACUTILS_ASSERT_DOUBLE_EQ(ADynArray_get(dynArray, i).y, tmpArray[i].y);
     }
     ADynArray_remove(dynArray, 0, 3);
-    ck_assert_uint_eq(ADynArray_size(dynArray), 6);
-    ck_assert_uint_eq(ADynArray_capacity(dynArray), 16);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 6);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(dynArray), 16);
     for(i = 0; i < ADynArray_size(dynArray); ++i) {
-        ck_assert_double_eq(ADynArray_get(dynArray, i).x, tmpArray[i + 3].x);
-        ck_assert_double_eq(ADynArray_get(dynArray, i).y, tmpArray[i + 3].y);
+        ACUTILS_ASSERT_DOUBLE_EQ(ADynArray_get(dynArray, i).x, tmpArray[i + 3].x);
+        ACUTILS_ASSERT_DOUBLE_EQ(ADynArray_get(dynArray, i).y, tmpArray[i + 3].y);
     }
     ADynArray_clear(dynArray);
-    ck_assert_uint_eq(ADynArray_size(dynArray), 0);
-    ck_assert_uint_eq(ADynArray_capacity(dynArray), 16);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_size(dynArray), 0);
+    ACUTILS_ASSERT_UINT_EQ(ADynArray_capacity(dynArray), 16);
     ADynArray_destruct(dynArray);
     free(tmpArray);
 }
@@ -2006,7 +2006,7 @@ END_TEST
 
 
 
-Suite* private_ACUtilsTest_ADynArray_getTestSuite(void)
+ACUTILS_EXTERN_C Suite* private_ACUtilsTest_ADynArray_getTestSuite(void)
 {
     Suite *s;
     TCase *test_case_ADynArray_construct_destruct, *test_case_ADynArray_setGrowStrategy, *test_case_ADynArray_size,

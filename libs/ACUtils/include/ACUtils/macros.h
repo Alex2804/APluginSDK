@@ -31,4 +31,15 @@
 #   define ACUTILS_HD_FUNC
 #endif
 
+#ifdef __cplusplus
+#   define ACUTILS_EXTERN_C extern "C"
+#   define ACUTILS_OPEN_EXTERN_C extern "C" {
+#   define ACUTILS_CLOSE_EXTERN_C }
+#else
+#   define nullptr NULL
+#   define ACUTILS_EXTERN_C
+#   define ACUTILS_OPEN_EXTERN_C
+#   define ACUTILS_CLOSE_EXTERN_C
+#endif
+
 #endif /* ACUTILS_MACROS_H */

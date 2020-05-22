@@ -2,8 +2,10 @@
 
 #include <stdlib.h>
 
-extern Suite* private_ACUtilsTest_ADynArray_getTestSuite(void);
-extern Suite* private_ACUtilsTest_AString_getTestSuite(void);
+#include "ACUtils/macros.h"
+
+ACUTILS_EXTERN_C Suite* private_ACUtilsTest_ADynArray_getTestSuite(void);
+ACUTILS_EXTERN_C Suite* private_ACUtilsTest_AString_getTestSuite(void);
 
 int main(void)
 {

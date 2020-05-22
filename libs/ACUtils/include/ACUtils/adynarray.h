@@ -4,6 +4,8 @@
 #include "macros.h"
 #include "types.h"
 
+ACUTILS_OPEN_EXTERN_C
+
 /**
  * Creates the struct declaration for an dynamic array.
  */
@@ -23,22 +25,22 @@
  * The passed dynamic array type must be defined with A_DYNAMIC_ARRAY_DEFINITION(name, type).
  *
  * @param ArrayType The type of the dynamic array to construct.
- * @return A Pointer to the constructed Array or NULL on failure.
+ * @return A Pointer to the constructed Array or null on failure.
  */
 #define ADynArray_construct(ArrayType) \
-    ((ArrayType*) private_ACUtils_ADynArray_construct(sizeof(*((ArrayType*)NULL)->buffer)))
+    ((ArrayType*) private_ACUtils_ADynArray_construct(sizeof(*((ArrayType*) nullptr)->buffer)))
 /**
  * Constructs a dynamic array of the passed type and initializes it with size 0.
  * The passed dynamic array type must be defined with A_DYNAMIC_ARRAY_DEFINITION(name, type) and the passed reallocator
  * and deallocator must be pointer to a valid reallocator and deallocator!
  *
  * @param ArrayType The type of the dynamic array to construct.
- * @param reallocator The function to reallocate memory with. This must be not NULL!
- * @param deallocator The function to free memory with. This must be not NULL!
- * @return A Pointer to the constructed Array or NULL on failure.
+ * @param reallocator The function to reallocate memory with. This must be not null!
+ * @param deallocator The function to free memory with. This must be not null!
+ * @return A Pointer to the constructed Array or null on failure.
  */
 #define ADynArray_constructWithAllocator(ArrayType, reallocator, deallocator) \
-    ((ArrayType*) private_ACUtils_ADynArray_constructWithAllocator(sizeof(*((ArrayType*)NULL)->buffer), reallocator, deallocator))
+    ((ArrayType*) private_ACUtils_ADynArray_constructWithAllocator(sizeof(*((ArrayType*) nullptr)->buffer), reallocator, deallocator))
 /**
  * Destructs the dynamic array and releases all held resources.
  *
@@ -52,19 +54,19 @@
  * @return The reallocator of dynArray.
  */
 #define ADynArray_reallocator(dynArray) \
-    (((dynArray) == NULL) ? NULL : (dynArray)->reallocator)
+    (((dynArray) == nullptr) ? nullptr : (dynArray)->reallocator)
 /**
  * @param dynArray The dynamic array to get the deallocatr from.
  * @return The deallocator of dynArray.
  */
 #define ADynArray_deallocator(dynArray) \
-    (((dynArray) == NULL) ? NULL : (dynArray)->deallocator)
+    (((dynArray) == nullptr) ? nullptr : (dynArray)->deallocator)
 /**
  * @param dynArray The dynamic array to get the grow strategy from.
  * @return The grow strategy of dynArray.
  */
 #define ADynArray_getGrowStrategy(dynArray) \
-    (((dynArray) == NULL) ? NULL : (dynArray)->growStrategy)
+    (((dynArray) == nullptr) ? nullptr : (dynArray)->growStrategy)
 /**
  * @param dynArray The dynamic array to set the grow strategy for.
  * @param growStrategy The new grow strategy function for dynArray.
@@ -77,7 +79,7 @@
  * @return The buffer of dynArray.
  */
 #define ADynArray_buffer(dynArray) \
-    (((dynArray) == NULL) ? NULL : (dynArray)->buffer)
+    (((dynArray) == nullptr) ? nullptr : (dynArray)->buffer)
 /**
  * @param dynArray The dynamic array to get the size from.
  * @return The size (number of elements) of the passed dynamic array.
@@ -177,8 +179,8 @@
  * @return True if the values were inserted successfully, false if not.
  */
 #define ADynArray_insertADynArray(destDynArray, index, srcDynArray) \
-    (srcDynArray == NULL ? \
-        destDynArray != NULL : ADynArray_insertArray(destDynArray, index, (srcDynArray)->buffer, (srcDynArray)->size))
+    (srcDynArray == nullptr ? \
+        destDynArray != nullptr : ADynArray_insertArray(destDynArray, index, (srcDynArray)->buffer, (srcDynArray)->size))
 
 /**
  * Adds the value to the end of dynArray.
@@ -265,5 +267,7 @@
     bool private_ACUtils_ADynArray_insertArray(void*, size_t, const void*, size_t, size_t);
     bool private_ACUtils_ADynArray_setRange(void*, size_t, size_t, void*, size_t);
 #endif
+
+ACUTILS_CLOSE_EXTERN_C
 
 #endif /* ACUTILS_ADYNARRAY_H */

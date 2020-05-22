@@ -5,6 +5,8 @@
 #include "types.h"
 #include "adynarray.h"
 
+ACUTILS_OPEN_EXTERN_C
+
 struct AString;
 A_DYNAMIC_ARRAY_DEFINITION(ASplittedString, struct AString*);
 
@@ -54,5 +56,7 @@ ACUTILS_HD_FUNC void AString_freeSplitted(struct ASplittedString *splitted);
 #ifdef ACUTILS_ONE_SOURCE
 #   include "../../src/astring.c"
 #endif
+
+ACUTILS_CLOSE_EXTERN_C
 
 #endif /* ACUTILS_ASTRING_H */
