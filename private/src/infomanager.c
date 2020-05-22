@@ -180,7 +180,6 @@ PRIVATE_APLUGINSDK_OPEN_PRIVATE_NAMESPACE
                                             const char* parameterList, void* functionPtr)
     {
         struct APLUGINLIBRARY_NAMESPACE APluginFeatureInfo* info;
-        char **splittedParameterList;
         struct private_APluginSDK_InfoManager* infoManager = private_APluginSDK_getInfoManagerInstance();
         if(infoManager == NULL)
             return false;

@@ -28,7 +28,7 @@ ACUTILS_OPEN_EXTERN_C
  * @return A Pointer to the constructed Array or null on failure.
  */
 #define ADynArray_construct(ArrayType) \
-    ((ArrayType*) private_ACUtils_ADynArray_construct(sizeof(*((ArrayType*) nullptr)->buffer)))
+    ((ArrayType*) private_ACUtils_ADynArray_construct(sizeof(*((ArrayType*) 0)->buffer)))
 /**
  * Constructs a dynamic array of the passed type and initializes it with size 0.
  * The passed dynamic array type must be defined with A_DYNAMIC_ARRAY_DEFINITION(name, type) and the passed reallocator
@@ -40,7 +40,7 @@ ACUTILS_OPEN_EXTERN_C
  * @return A Pointer to the constructed Array or null on failure.
  */
 #define ADynArray_constructWithAllocator(ArrayType, reallocator, deallocator) \
-    ((ArrayType*) private_ACUtils_ADynArray_constructWithAllocator(sizeof(*((ArrayType*) nullptr)->buffer), reallocator, deallocator))
+    ((ArrayType*) private_ACUtils_ADynArray_constructWithAllocator(sizeof(*((ArrayType*) 0)->buffer), reallocator, deallocator))
 /**
  * Destructs the dynamic array and releases all held resources.
  *
@@ -243,12 +243,12 @@ ACUTILS_OPEN_EXTERN_C
  *
  * No bound checking is performed. The behavior is undefined if index is out of bounds!
  *
- * @param dynArray The dynamic array to get the element from.
+ * @param dynArray The dynamic array to get the element from. Mustn't be null'
  * @param index The index in dynArray to get the element of.
  * @return The element in dynArray at index.
  */
 #define ADynArray_get(dynArray, index) \
-    (ADynArray_buffer(dynArray)[index])
+    (dynArray->buffer[index])
 
 #ifdef ACUTILS_ONE_SOURCE
 #   include "../../src/adynarray.c"

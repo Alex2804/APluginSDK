@@ -46,10 +46,10 @@ ACUTILS_HD_FUNC void* private_ACUtils_ADynArray_constructWithAllocator(size_t ty
         return NULL;
     prototype = (struct private_ACUtils_DynArray_Prototype*) reallocator(NULL, sizeof(struct private_ACUtils_DynArray_Prototype));
     if(prototype != NULL) {
-        struct private_ACUtils_DynArray_Prototype tmpPrototype = {.reallocator = reallocator,
-                .deallocator = deallocator, .growStrategy = private_ACUtils_ADynArray_growStrategyDefault,
-                .size = 0};
+        struct private_ACUtils_DynArray_Prototype tmpPrototype = {reallocator, deallocator};
         memcpy(prototype, &tmpPrototype, sizeof(struct private_ACUtils_DynArray_Prototype));
+        prototype->growStrategy = private_ACUtils_ADynArray_growStrategyDefault;
+        prototype->size = 0;
         prototype->capacity = prototype->growStrategy(prototype->size, typeSize);
         prototype->buffer = (char*) prototype->reallocator(NULL, prototype->capacity * typeSize);
         if(prototype->buffer == NULL) {
