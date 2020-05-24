@@ -11,6 +11,10 @@ APLUGINSDK_NO_EXPORT void* APLUGINLIBRARY_NAMESPACE APluginSDK_malloc(size_t siz
 {
     return malloc(size);
 }
+APLUGINSDK_NO_EXPORT void* APLUGINLIBRARY_NAMESPACE APluginSDK_realloc(void *ptr, size_t size)
+{
+    return realloc(ptr, size);
+}
 APLUGINSDK_NO_EXPORT void APLUGINLIBRARY_NAMESPACE APluginSDK_free(void* ptr)
 {
     free(ptr);

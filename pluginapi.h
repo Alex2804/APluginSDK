@@ -10,15 +10,16 @@
 PRIVATE_APLUGINLIBRARY_OPEN_NAMESPACE
     PRIVATE_APLUGINSDK_OPEN_EXTERN_C
         APLUGINSDK_NO_EXPORT void* APluginSDK_malloc(size_t size);
-        APLUGINSDK_NO_EXPORT void APluginSDK_free(void* ptr);
+        APLUGINSDK_NO_EXPORT void* APluginSDK_realloc(void *ptr, size_t size);
+        APLUGINSDK_NO_EXPORT void APluginSDK_free(void *ptr);
     PRIVATE_APLUGINSDK_CLOSE_EXTERN_C
 PRIVATE_APLUGINLIBRARY_CLOSE_NAMESPACE
 
 PRIVATE_APLUGINSDK_OPEN_API_NAMESPACE
     PRIVATE_APLUGINSDK_OPEN_EXTERN_C
-    APLUGINSDK_API void APluginSDK_initPlugin(void); /* existence must be checked */
-    APLUGINSDK_API void APluginSDK_finiPlugin(void); /* existence must be checked */
-    APLUGINSDK_API const struct APluginInfo* APluginSDK_getPluginInfo(void);
+        APLUGINSDK_API void APluginSDK_initPlugin(void); /* existence must be checked */
+        APLUGINSDK_API void APluginSDK_finiPlugin(void); /* existence must be checked */
+        APLUGINSDK_API const struct APluginInfo* APluginSDK_getPluginInfo(void);
     PRIVATE_APLUGINSDK_CLOSE_EXTERN_C
 PRIVATE_APLUGINSDK_CLOSE_API_NAMESPACE
 
