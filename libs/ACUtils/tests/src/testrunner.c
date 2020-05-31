@@ -4,6 +4,11 @@
 
 #include "ACUtils/macros.h"
 
+#ifndef __cplusplus
+#   undef ACUTILS_EXTERN_C
+#   define ACUTILS_EXTERN_C extern
+#endif
+
 ACUTILS_EXTERN_C Suite* private_ACUtilsTest_ADynArray_getTestSuite(void);
 ACUTILS_EXTERN_C Suite* private_ACUtilsTest_AString_getTestSuite(void);
 
