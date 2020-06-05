@@ -2,6 +2,7 @@
 #define APLUGINSDK_PLUGINAPI_H
 
 #include "private/infomanager.h"
+#include "private/macros.h"
 
 #define APLUGINSDK_API_VERSION_MAJOR 4
 #define APLUGINSDK_API_VERSION_MINOR 0
