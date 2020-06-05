@@ -46,9 +46,9 @@ ACUTILS_HD_FUNC bool AString_replaceRange(struct AString *str, size_t index, siz
 ACUTILS_HD_FUNC bool AString_replaceRangeCString(struct AString *str, size_t index, size_t count, const char *cstr, size_t len);
 ACUTILS_HD_FUNC bool AString_replaceRangeAString(struct AString *str, size_t index, size_t count, const struct AString *rep);
 
-ACUTILS_HD_FUNC void AString_replace(struct AString *str, char old, char new, size_t count);
-ACUTILS_HD_FUNC bool AString_replaceCString(struct AString *str, const char *old, size_t oldLen, const char *new, size_t newLen, size_t count);
-ACUTILS_HD_FUNC bool AString_replaceAString(struct AString *str, const struct AString *old, const struct AString *new, size_t count);
+ACUTILS_HD_FUNC void AString_replace(struct AString *str, char old, char rep, size_t count);
+ACUTILS_HD_FUNC bool AString_replaceCString(struct AString *str, const char *old, size_t oldLen, const char *rep, size_t newLen, size_t count);
+ACUTILS_HD_FUNC bool AString_replaceAString(struct AString *str, const struct AString *old, const struct AString *rep, size_t count);
 
 ACUTILS_HD_FUNC bool AString_equals(const struct AString *str1, const struct AString *str2);
 ACUTILS_HD_FUNC bool AString_equalsCString(const struct AString *str, const char *cstr);
