@@ -32,6 +32,9 @@
 #endif
 
 #ifdef __cplusplus
+#   if __cplusplus < 201103L
+#       define nullptr NULL
+#   endif
 #   define ACUTILS_EXTERN_C extern "C"
 #   define ACUTILS_OPEN_EXTERN_C extern "C" {
 #   define ACUTILS_CLOSE_EXTERN_C }
