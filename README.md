@@ -23,8 +23,8 @@ compiling src/c/pluginapi.c or src/cpp/pluginapi.cpp (depending on the language)
 The C API is C90 compliant.
 
 #### <a name="C-API-init-fini">Init and Fini function</a>
-A plugin can have an initialization and a finalization method, which are called after which are called after loading/
-before unloading of the shared library (not every time the plugin is loaded). The macros can only be used once per
+A plugin can have an initialization and a finalization method, which are called after loading/
+before unloading of the **shared library** (not every time the plugin is loaded). The macros can only be used once per
 plugin and must be used in the global scope. The initialization method must exist in the plugin, the finalization method
 is optional.
 
@@ -116,7 +116,7 @@ The initialization and finalization functions are the same as the [C API](#C-API
 function and the finalization function are optional. The macros must be used in global namespace!
 
 #### <a name="CPP-API-name-version">Name And Version</a>
-The name and version macros are the same as the [C API](#C-API-name-version) and can additionally be used outside of
+The name and version macros are the same as in the [C API](#C-API-name-version) and can additionally be used outside of
 functions in any namespace. The name/version selected from multiple definitions is undefined.
 
 #### <a name="CPP-API-feature">Feature</a>
