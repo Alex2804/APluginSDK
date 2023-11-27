@@ -37,7 +37,7 @@ The initialization method can be registered with the following macro:
 
 The finalization method can be registered with the following macro:
 
-    A_PLUGIN_FiINI
+    A_PLUGIN_FINI
     {
         // finalization code
     }
